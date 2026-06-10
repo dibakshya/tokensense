@@ -1,0 +1,423 @@
+version: "1"
+last_updated: "2026-06-10"
+
+task_types:
+  - id: code_generation
+    description: "Writing new code, functions, classes, scripts"
+  - id: code_review
+    description: "Reviewing or auditing existing code"
+  - id: debugging
+    description: "Finding and fixing bugs or errors"
+  - id: test_generation
+    description: "Writing unit or integration tests"
+  - id: documentation
+    description: "Writing docs, docstrings, READMEs"
+  - id: reasoning
+    description: "Analysis, synthesis, tradeoff evaluation"
+  - id: data_extraction
+    description: "Extracting structured data from unstructured text"
+  - id: summarization
+    description: "Summarizing documents or conversations"
+  - id: chat
+    description: "General conversation"
+
+models:
+  - id: claude-opus-4
+    provider: anthropic
+    display_name: "Claude Opus 4"
+    tier: premium
+    context_window: 200000
+    pricing:
+      input_per_1m_usd: 15.00
+      output_per_1m_usd: 75.00
+    task_recommendations:
+      code_generation:  {quality: 98, recommended_for_complexity: [high]}
+      code_review:      {quality: 97, recommended_for_complexity: [high]}
+      debugging:        {quality: 96, recommended_for_complexity: [high]}
+      test_generation:  {quality: 93, recommended_for_complexity: [high]}
+      documentation:    {quality: 95, recommended_for_complexity: [high]}
+      reasoning:        {quality: 99, recommended_for_complexity: [low, medium, high]}
+      data_extraction:  {quality: 90, recommended_for_complexity: [high]}
+      summarization:    {quality: 96, recommended_for_complexity: [high]}
+      chat:              {quality: 95, recommended_for_complexity: [low, medium, high]}
+    last_verified: "2026-05-15"
+
+  - id: claude-sonnet-4-5
+    provider: anthropic
+    display_name: "Claude Sonnet 4.5"
+    tier: balanced
+    context_window: 200000
+    pricing:
+      input_per_1m_usd: 3.00
+      output_per_1m_usd: 15.00
+    task_recommendations:
+      code_generation:  {quality: 92, recommended_for_complexity: [medium, high]}
+      code_review:      {quality: 90, recommended_for_complexity: [medium, high]}
+      debugging:        {quality: 91, recommended_for_complexity: [medium, high]}
+      test_generation:  {quality: 89, recommended_for_complexity: [medium]}
+      documentation:    {quality: 88, recommended_for_complexity: [medium]}
+      reasoning:        {quality: 91, recommended_for_complexity: [medium, high]}
+      data_extraction:  {quality: 86, recommended_for_complexity: [medium]}
+      summarization:    {quality: 89, recommended_for_complexity: [medium]}
+      chat:              {quality: 90, recommended_for_complexity: [low, medium, high]}
+    last_verified: "2026-05-15"
+
+  - id: claude-haiku-3-5
+    provider: anthropic
+    display_name: "Claude Haiku 3.5"
+    tier: fast
+    context_window: 200000
+    pricing:
+      input_per_1m_usd: 0.80
+      output_per_1m_usd: 4.00
+    task_recommendations:
+      code_generation:  {quality: 78, recommended_for_complexity: [low, medium]}
+      code_review:      {quality: 72, recommended_for_complexity: [low]}
+      debugging:        {quality: 74, recommended_for_complexity: [low]}
+      test_generation:  {quality: 82, recommended_for_complexity: [low, medium]}
+      documentation:    {quality: 80, recommended_for_complexity: [low, medium]}
+      reasoning:        {quality: 68, recommended_for_complexity: [low]}
+      data_extraction:  {quality: 84, recommended_for_complexity: [low, medium]}
+      summarization:    {quality: 81, recommended_for_complexity: [low, medium]}
+      chat:              {quality: 82, recommended_for_complexity: [low, medium]}
+    last_verified: "2026-05-15"
+
+  - id: gemini-2.5-flash
+    provider: google
+    display_name: "Gemini 2.5 Flash"
+    tier: fast
+    context_window: 1000000
+    pricing:
+      input_per_1m_usd: 0.15
+      output_per_1m_usd: 0.60
+    task_recommendations:
+      code_generation:  {quality: 80, recommended_for_complexity: [low, medium]}
+      code_review:      {quality: 76, recommended_for_complexity: [low]}
+      debugging:        {quality: 77, recommended_for_complexity: [low, medium]}
+      test_generation:  {quality: 79, recommended_for_complexity: [low, medium]}
+      documentation:    {quality: 78, recommended_for_complexity: [low, medium]}
+      reasoning:        {quality: 72, recommended_for_complexity: [low]}
+      data_extraction:  {quality: 85, recommended_for_complexity: [low, medium]}
+      summarization:    {quality: 82, recommended_for_complexity: [low, medium]}
+      chat:              {quality: 80, recommended_for_complexity: [low, medium]}
+    last_verified: "2026-05-15"
+
+  - id: gemini-2.5-pro
+    provider: google
+    display_name: "Gemini 2.5 Pro"
+    tier: balanced
+    context_window: 1000000
+    pricing:
+      input_per_1m_usd: 1.25
+      output_per_1m_usd: 10.00
+    task_recommendations:
+      code_generation:  {quality: 91, recommended_for_complexity: [medium, high]}
+      code_review:      {quality: 89, recommended_for_complexity: [medium]}
+      debugging:        {quality: 90, recommended_for_complexity: [medium]}
+      test_generation:  {quality: 87, recommended_for_complexity: [medium]}
+      documentation:    {quality: 86, recommended_for_complexity: [medium]}
+      reasoning:        {quality: 90, recommended_for_complexity: [medium, high]}
+      data_extraction:  {quality: 88, recommended_for_complexity: [medium]}
+      summarization:    {quality: 88, recommended_for_complexity: [medium]}
+      chat:              {quality: 88, recommended_for_complexity: [low, medium, high]}
+    last_verified: "2026-05-15"
+
+  - id: gemini-2.0-flash-exp
+    provider: google
+    display_name: "Gemini 2.0 Flash Exp"
+    tier: fast
+    context_window: 1000000
+    pricing:
+      input_per_1m_usd: 0.10
+      output_per_1m_usd: 0.40
+    task_recommendations:
+      code_generation:  {quality: 76, recommended_for_complexity: [low]}
+      code_review:      {quality: 72, recommended_for_complexity: [low]}
+      debugging:        {quality: 73, recommended_for_complexity: [low]}
+      test_generation:  {quality: 75, recommended_for_complexity: [low]}
+      documentation:    {quality: 74, recommended_for_complexity: [low]}
+      reasoning:        {quality: 70, recommended_for_complexity: [low]}
+      data_extraction:  {quality: 80, recommended_for_complexity: [low]}
+      summarization:    {quality: 78, recommended_for_complexity: [low]}
+      chat:              {quality: 76, recommended_for_complexity: [low]}
+    last_verified: "2026-05-15"
+
+  - id: gpt-4o
+    provider: openai
+    display_name: "GPT-4o"
+    tier: balanced
+    context_window: 128000
+    pricing:
+      input_per_1m_usd: 2.50
+      output_per_1m_usd: 10.00
+    task_recommendations:
+      code_generation:  {quality: 93, recommended_for_complexity: [medium, high]}
+      code_review:      {quality: 91, recommended_for_complexity: [medium, high]}
+      debugging:        {quality: 92, recommended_for_complexity: [medium, high]}
+      test_generation:  {quality: 88, recommended_for_complexity: [medium]}
+      documentation:    {quality: 87, recommended_for_complexity: [medium]}
+      reasoning:        {quality: 92, recommended_for_complexity: [medium, high]}
+      data_extraction:  {quality: 87, recommended_for_complexity: [medium]}
+      summarization:    {quality: 90, recommended_for_complexity: [medium]}
+      chat:              {quality: 92, recommended_for_complexity: [low, medium, high]}
+    last_verified: "2026-05-15"
+
+  - id: gpt-4o-mini
+    provider: openai
+    display_name: "GPT-4o Mini"
+    tier: fast
+    context_window: 128000
+    pricing:
+      input_per_1m_usd: 0.15
+      output_per_1m_usd: 0.60
+    task_recommendations:
+      code_generation:  {quality: 79, recommended_for_complexity: [low, medium]}
+      code_review:      {quality: 74, recommended_for_complexity: [low]}
+      debugging:        {quality: 76, recommended_for_complexity: [low, medium]}
+      test_generation:  {quality: 80, recommended_for_complexity: [low, medium]}
+      documentation:    {quality: 79, recommended_for_complexity: [low, medium]}
+      reasoning:        {quality: 70, recommended_for_complexity: [low]}
+      data_extraction:  {quality: 83, recommended_for_complexity: [low, medium]}
+      summarization:    {quality: 80, recommended_for_complexity: [low, medium]}
+      chat:              {quality: 81, recommended_for_complexity: [low, medium]}
+    last_verified: "2026-05-15"
+
+  - id: mistral-large-2
+    provider: mistral
+    display_name: "Mistral Large 2"
+    tier: balanced
+    context_window: 128000
+    pricing:
+      input_per_1m_usd: 2.00
+      output_per_1m_usd: 6.00
+    task_recommendations:
+      code_generation:  {quality: 88, recommended_for_complexity: [medium]}
+      code_review:      {quality: 85, recommended_for_complexity: [medium]}
+      debugging:        {quality: 86, recommended_for_complexity: [medium]}
+      test_generation:  {quality: 84, recommended_for_complexity: [medium]}
+      documentation:    {quality: 83, recommended_for_complexity: [medium]}
+      reasoning:        {quality: 87, recommended_for_complexity: [medium]}
+      data_extraction:  {quality: 82, recommended_for_complexity: [medium]}
+      summarization:    {quality: 85, recommended_for_complexity: [medium]}
+      chat:              {quality: 86, recommended_for_complexity: [low, medium]}
+    last_verified: "2026-05-15"
+
+  - id: mistral-small-3
+    provider: mistral
+    display_name: "Mistral Small 3"
+    tier: fast
+    context_window: 128000
+    pricing:
+      input_per_1m_usd: 0.10
+      output_per_1m_usd: 0.30
+    task_recommendations:
+      code_generation:  {quality: 72, recommended_for_complexity: [low]}
+      code_review:      {quality: 68, recommended_for_complexity: [low]}
+      debugging:        {quality: 70, recommended_for_complexity: [low]}
+      test_generation:  {quality: 73, recommended_for_complexity: [low]}
+      documentation:    {quality: 71, recommended_for_complexity: [low]}
+      reasoning:        {quality: 65, recommended_for_complexity: [low]}
+      data_extraction:  {quality: 76, recommended_for_complexity: [low]}
+      summarization:    {quality: 74, recommended_for_complexity: [low]}
+      chat:              {quality: 75, recommended_for_complexity: [low]}
+    last_verified: "2026-05-15"
+
+  - id: command-r-plus
+    provider: cohere
+    display_name: "Command R+"
+    tier: balanced
+    context_window: 128000
+    pricing:
+      input_per_1m_usd: 2.50
+      output_per_1m_usd: 10.00
+    task_recommendations:
+      code_generation:  {quality: 82, recommended_for_complexity: [medium]}
+      code_review:      {quality: 78, recommended_for_complexity: [medium]}
+      debugging:        {quality: 80, recommended_for_complexity: [medium]}
+      test_generation:  {quality: 79, recommended_for_complexity: [medium]}
+      documentation:    {quality: 81, recommended_for_complexity: [medium]}
+      reasoning:        {quality: 84, recommended_for_complexity: [medium]}
+      data_extraction:  {quality: 86, recommended_for_complexity: [medium]}
+      summarization:    {quality: 88, recommended_for_complexity: [medium]}
+      chat:              {quality: 85, recommended_for_complexity: [low, medium]}
+    last_verified: "2026-05-15"
+
+  - id: command-r
+    provider: cohere
+    display_name: "Command R"
+    tier: fast
+    context_window: 128000
+    pricing:
+      input_per_1m_usd: 0.15
+      output_per_1m_usd: 0.60
+    task_recommendations:
+      code_generation:  {quality: 70, recommended_for_complexity: [low]}
+      code_review:      {quality: 66, recommended_for_complexity: [low]}
+      debugging:        {quality: 68, recommended_for_complexity: [low]}
+      test_generation:  {quality: 71, recommended_for_complexity: [low]}
+      documentation:    {quality: 72, recommended_for_complexity: [low]}
+      reasoning:        {quality: 70, recommended_for_complexity: [low]}
+      data_extraction:  {quality: 78, recommended_for_complexity: [low]}
+      summarization:    {quality: 80, recommended_for_complexity: [low]}
+      chat:              {quality: 78, recommended_for_complexity: [low]}
+    last_verified: "2026-05-15"
+
+  - id: llama-3.3-70b
+    provider: groq
+    display_name: "Llama 3.3 70B (Groq)"
+    tier: fast
+    context_window: 128000
+    pricing:
+      input_per_1m_usd: 0.59
+      output_per_1m_usd: 0.79
+    task_recommendations:
+      code_generation:  {quality: 82, recommended_for_complexity: [low, medium]}
+      code_review:      {quality: 78, recommended_for_complexity: [low]}
+      debugging:        {quality: 80, recommended_for_complexity: [low, medium]}
+      test_generation:  {quality: 79, recommended_for_complexity: [low, medium]}
+      documentation:    {quality: 77, recommended_for_complexity: [low, medium]}
+      reasoning:        {quality: 76, recommended_for_complexity: [low]}
+      data_extraction:  {quality: 81, recommended_for_complexity: [low, medium]}
+      summarization:    {quality: 79, recommended_for_complexity: [low, medium]}
+      chat:              {quality: 80, recommended_for_complexity: [low, medium]}
+    last_verified: "2026-05-15"
+
+  - id: llama-3.1-8b
+    provider: groq
+    display_name: "Llama 3.1 8B (Groq)"
+    tier: fast
+    context_window: 128000
+    pricing:
+      input_per_1m_usd: 0.05
+      output_per_1m_usd: 0.08
+    task_recommendations:
+      code_generation:  {quality: 62, recommended_for_complexity: [low]}
+      code_review:      {quality: 55, recommended_for_complexity: [low]}
+      debugging:        {quality: 58, recommended_for_complexity: [low]}
+      test_generation:  {quality: 64, recommended_for_complexity: [low]}
+      documentation:    {quality: 65, recommended_for_complexity: [low]}
+      reasoning:        {quality: 52, recommended_for_complexity: [low]}
+      data_extraction:  {quality: 68, recommended_for_complexity: [low]}
+      summarization:    {quality: 70, recommended_for_complexity: [low]}
+      chat:              {quality: 68, recommended_for_complexity: [low]}
+    last_verified: "2026-05-15"
+
+  - id: grok-2
+    provider: xai
+    display_name: "Grok 2"
+    tier: balanced
+    context_window: 128000
+    pricing:
+      input_per_1m_usd: 2.00
+      output_per_1m_usd: 10.00
+    task_recommendations:
+      code_generation:  {quality: 85, recommended_for_complexity: [medium]}
+      code_review:      {quality: 82, recommended_for_complexity: [medium]}
+      debugging:        {quality: 84, recommended_for_complexity: [medium]}
+      test_generation:  {quality: 81, recommended_for_complexity: [medium]}
+      documentation:    {quality: 80, recommended_for_complexity: [medium]}
+      reasoning:        {quality: 86, recommended_for_complexity: [medium]}
+      data_extraction:  {quality: 80, recommended_for_complexity: [medium]}
+      summarization:    {quality: 83, recommended_for_complexity: [medium]}
+      chat:              {quality: 84, recommended_for_complexity: [low, medium]}
+    last_verified: "2026-05-15"
+
+  - id: grok-2-mini
+    provider: xai
+    display_name: "Grok 2 Mini"
+    tier: fast
+    context_window: 128000
+    pricing:
+      input_per_1m_usd: 0.30
+      output_per_1m_usd: 1.00
+    task_recommendations:
+      code_generation:  {quality: 74, recommended_for_complexity: [low]}
+      code_review:      {quality: 70, recommended_for_complexity: [low]}
+      debugging:        {quality: 72, recommended_for_complexity: [low]}
+      test_generation:  {quality: 75, recommended_for_complexity: [low]}
+      documentation:    {quality: 73, recommended_for_complexity: [low]}
+      reasoning:        {quality: 68, recommended_for_complexity: [low]}
+      data_extraction:  {quality: 76, recommended_for_complexity: [low]}
+      summarization:    {quality: 75, recommended_for_complexity: [low]}
+      chat:              {quality: 74, recommended_for_complexity: [low]}
+    last_verified: "2026-05-15"
+
+  - id: deepseek-v3
+    provider: unknown
+    display_name: "DeepSeek V3"
+    tier: fast
+    context_window: 128000
+    pricing:
+      input_per_1m_usd: 0.27
+      output_per_1m_usd: 1.10
+    task_recommendations:
+      code_generation:  {quality: 86, recommended_for_complexity: [low, medium]}
+      code_review:      {quality: 82, recommended_for_complexity: [low, medium]}
+      debugging:        {quality: 84, recommended_for_complexity: [low, medium]}
+      test_generation:  {quality: 83, recommended_for_complexity: [low, medium]}
+      documentation:    {quality: 80, recommended_for_complexity: [low, medium]}
+      reasoning:        {quality: 82, recommended_for_complexity: [low, medium]}
+      data_extraction:  {quality: 84, recommended_for_complexity: [low, medium]}
+      summarization:    {quality: 82, recommended_for_complexity: [low, medium]}
+      chat:              {quality: 83, recommended_for_complexity: [low, medium]}
+    last_verified: "2026-05-15"
+
+  - id: deepseek-r1
+    provider: unknown
+    display_name: "DeepSeek R1"
+    tier: balanced
+    context_window: 128000
+    pricing:
+      input_per_1m_usd: 0.55
+      output_per_1m_usd: 2.19
+    task_recommendations:
+      code_generation:  {quality: 90, recommended_for_complexity: [medium, high]}
+      code_review:      {quality: 87, recommended_for_complexity: [medium, high]}
+      debugging:        {quality: 89, recommended_for_complexity: [medium, high]}
+      test_generation:  {quality: 86, recommended_for_complexity: [medium]}
+      documentation:    {quality: 84, recommended_for_complexity: [medium]}
+      reasoning:        {quality: 93, recommended_for_complexity: [medium, high]}
+      data_extraction:  {quality: 85, recommended_for_complexity: [medium]}
+      summarization:    {quality: 86, recommended_for_complexity: [medium]}
+      chat:              {quality: 87, recommended_for_complexity: [low, medium]}
+    last_verified: "2026-05-15"
+
+  - id: qwen-3-235b
+    provider: unknown
+    display_name: "Qwen 3 235B"
+    tier: balanced
+    context_window: 128000
+    pricing:
+      input_per_1m_usd: 0.80
+      output_per_1m_usd: 3.20
+    task_recommendations:
+      code_generation:  {quality: 87, recommended_for_complexity: [medium]}
+      code_review:      {quality: 83, recommended_for_complexity: [medium]}
+      debugging:        {quality: 85, recommended_for_complexity: [medium]}
+      test_generation:  {quality: 84, recommended_for_complexity: [medium]}
+      documentation:    {quality: 82, recommended_for_complexity: [medium]}
+      reasoning:        {quality: 86, recommended_for_complexity: [medium]}
+      data_extraction:  {quality: 83, recommended_for_complexity: [medium]}
+      summarization:    {quality: 84, recommended_for_complexity: [medium]}
+      chat:              {quality: 85, recommended_for_complexity: [low, medium]}
+    last_verified: "2026-05-15"
+
+  - id: claude-sonnet-4
+    provider: anthropic
+    display_name: "Claude Sonnet 4"
+    tier: balanced
+    context_window: 200000
+    pricing:
+      input_per_1m_usd: 3.00
+      output_per_1m_usd: 15.00
+    task_recommendations:
+      code_generation:  {quality: 94, recommended_for_complexity: [medium, high]}
+      code_review:      {quality: 92, recommended_for_complexity: [medium, high]}
+      debugging:        {quality: 93, recommended_for_complexity: [medium, high]}
+      test_generation:  {quality: 90, recommended_for_complexity: [medium, high]}
+      documentation:    {quality: 89, recommended_for_complexity: [medium]}
+      reasoning:        {quality: 93, recommended_for_complexity: [medium, high]}
+      data_extraction:  {quality: 88, recommended_for_complexity: [medium]}
+      summarization:    {quality: 90, recommended_for_complexity: [medium]}
+      chat:              {quality: 91, recommended_for_complexity: [low, medium, high]}
+    last_verified: "2026-06-01"

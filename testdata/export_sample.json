@@ -1,0 +1,44 @@
+[
+  {
+    "day_date": "2026-06-09",
+    "provider": "anthropic",
+    "model": "claude-sonnet-4-5",
+    "task_type": "code_generation",
+    "complexity": "medium",
+    "tokens_in": 1200,
+    "tokens_out": 800,
+    "cost_usd": 0.0156,
+    "latency_ms": 2100,
+    "classifier_source": "rule_based",
+    "classifier_confidence": 0.87,
+    "tool_source": "cursor"
+  },
+  {
+    "day_date": "2026-06-09",
+    "provider": "openai",
+    "model": "gpt-4o",
+    "task_type": "debugging",
+    "complexity": "low",
+    "tokens_in": 800,
+    "tokens_out": 400,
+    "cost_usd": 0.006,
+    "latency_ms": 1500,
+    "classifier_source": "rule_based",
+    "classifier_confidence": 0.92,
+    "tool_source": "vscode"
+  },
+  {
+    "day_date": "2026-06-10",
+    "provider": "anthropic",
+    "model": "claude-opus-4",
+    "task_type": "reasoning",
+    "complexity": "high",
+    "tokens_in": 3000,
+    "tokens_out": 2000,
+    "cost_usd": 0.195,
+    "latency_ms": 8500,
+    "classifier_source": "api_fallback",
+    "classifier_confidence": 0.95,
+    "tool_source": "cursor"
+  }
+]

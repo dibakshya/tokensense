@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tokensense — AI Token Usage Optimizer</title>
+  <meta name="description" content="Open-source local proxy that intercepts AI API calls, classifies tasks, and tells you exactly where you're wasting money." />
+  <style>
+    /* ── Reset & base ─────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:        #0d0f12;
+      --surface:   #161a21;
+      --surface2:  #1e2330;
+      --border:    #2a3040;
+      --accent:    #4f8ef7;
+      --accent2:   #7c5cfc;
+      --green:     #30d97a;
+      --amber:     #f5a623;
+      --text:      #e4e8f0;
+      --muted:     #7a8596;
+      --code-bg:   #111520;
+      --radius:    10px;
+      --font:      -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      --mono:      "SF Mono", "JetBrains Mono", "Fira Code", "Cascadia Code", Consolas, monospace;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 16px;
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    img { max-width: 100%; height: auto; }
+
+    /* ── Layout helpers ───────────────────────────────────────── */
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+    .section { padding: 80px 0; }
+    .section:nth-child(even) { background: var(--surface); }
+
+    /* ── Top nav ──────────────────────────────────────────────── */
+    nav {
+      position: relative; z-index: 100;
+      background: rgba(13,15,18,0.88);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 24px;
+    }
+    .nav-inner {
+      max-width: 1100px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .nav-logo {
+      display: flex; align-items: center; gap: 10px;
+      font-weight: 700; font-size: 18px; color: var(--text);
+    }
+    .nav-logo svg { flex-shrink: 0; }
+    .nav-links { display: flex; gap: 28px; align-items: center; }
+    .nav-links a { color: var(--muted); font-size: 14px; transition: color .2s; }
+    .nav-links a:hover { color: var(--text); text-decoration: none; }
+    .nav-cta {
+      background: var(--accent);
+      color: #fff !important;
+      padding: 7px 16px;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 13px;
+      transition: opacity .2s;
+    }
+    .nav-cta:hover { opacity: .85; text-decoration: none !important; }
+
+    /* ── Hero ─────────────────────────────────────────────────── */
+    .hero {
+      padding: 100px 0 80px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: "";
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse 80% 60% at 50% -10%, rgba(79,142,247,.18) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(79,142,247,.12);
+      border: 1px solid rgba(79,142,247,.3);
+      color: var(--accent);
+      border-radius: 100px;
+      padding: 5px 14px;
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 28px;
+      letter-spacing: .3px;
+    }
+    .badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
+    h1 {
+      font-size: clamp(36px, 6vw, 68px);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -1.5px;
+      margin-bottom: 22px;
+      background: linear-gradient(135deg, #fff 0%, #a0b4d4 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero-sub {
+      max-width: 600px; margin: 0 auto 40px;
+      color: var(--muted); font-size: 18px; line-height: 1.6;
+    }
+    .hero-actions { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 12px 24px; border-radius: 8px; font-size: 15px; font-weight: 600;
+      transition: all .2s; cursor: pointer; border: none; text-decoration: none;
+    }
+    .btn-primary {
+      background: var(--accent); color: #fff;
+    }
+    .btn-primary:hover { background: #3a79e5; transform: translateY(-1px); text-decoration: none; }
+    .btn-secondary {
+      background: var(--surface2); color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn-secondary:hover { background: var(--border); transform: translateY(-1px); text-decoration: none; }
+    .btn-green {
+      background: rgba(48,217,122,.12); color: var(--green);
+      border: 1px solid rgba(48,217,122,.35);
+    }
+    .btn-green:hover { background: rgba(48,217,122,.2); text-decoration: none; }
+    .hero-meta {
+      margin-top: 40px; color: var(--muted); font-size: 13px;
+      display: flex; gap: 28px; justify-content: center; flex-wrap: wrap;
+    }
+    .hero-meta span { display: flex; align-items: center; gap: 6px; }
+
+    /* ── Terminal demo ────────────────────────────────────────── */
+    .terminal-wrap { margin-top: 60px; }
+    .terminal {
+      background: var(--code-bg); border: 1px solid var(--border);
+      border-radius: 12px; overflow: hidden; max-width: 780px; margin: 0 auto;
+      box-shadow: 0 24px 64px rgba(0,0,0,.5);
+    }
+    .terminal-bar {
+      background: var(--surface); padding: 12px 16px;
+      display: flex; align-items: center; gap: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+    .terminal-dot { width: 12px; height: 12px; border-radius: 50%; }
+    .dot-r { background: #ff5f57; }
+    .dot-y { background: #febc2e; }
+    .dot-g { background: #28c840; }
+    .terminal-title { margin-left: 8px; font-size: 12px; color: var(--muted); font-family: var(--mono); }
+    .terminal-body { padding: 24px; font-family: var(--mono); font-size: 13.5px; line-height: 1.8; }
+    .t-prompt { color: var(--accent); }
+    .t-cmd { color: var(--text); }
+    .t-comment { color: #4a566a; }
+    .t-green { color: var(--green); }
+    .t-amber { color: var(--amber); }
+    .t-blue { color: #7dd3fc; }
+    .t-purple { color: #c4b5fd; }
+
+    /* ── Section titles ───────────────────────────────────────── */
+    .section-label {
+      font-size: 12px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 12px;
+    }
+    h2 {
+      font-size: clamp(26px, 4vw, 40px);
+      font-weight: 800; letter-spacing: -.5px;
+      margin-bottom: 14px;
+    }
+    .section-sub {
+      color: var(--muted); font-size: 17px; max-width: 560px;
+      margin-bottom: 56px; line-height: 1.6;
+    }
+
+    /* ── Feature cards ────────────────────────────────────────── */
+    .features-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+    .feature-card {
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 28px;
+      transition: border-color .2s, transform .2s;
+    }
+    .feature-card:hover { border-color: rgba(79,142,247,.4); transform: translateY(-2px); }
+    .feature-icon {
+      width: 44px; height: 44px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; margin-bottom: 16px;
+    }
+    .feature-card h3 { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+    .feature-card p { color: var(--muted); font-size: 14px; line-height: 1.6; }
+
+    /* ── How it works ─────────────────────────────────────────── */
+    .flow {
+      display: flex; flex-direction: column; gap: 0;
+      max-width: 700px; margin: 0 auto;
+    }
+    .flow-step {
+      display: flex; gap: 24px;
+      padding: 28px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .flow-step:last-child { border-bottom: none; }
+    .flow-num {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 16px; flex-shrink: 0;
+    }
+    .flow-step h3 { font-size: 17px; font-weight: 700; margin-bottom: 6px; }
+    .flow-step p { color: var(--muted); font-size: 14px; line-height: 1.6; }
+
+    /* ── Commands table ───────────────────────────────────────── */
+    .cmd-grid {
+      display: grid; gap: 12px;
+    }
+    .cmd-row {
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 8px; padding: 16px 20px;
+      display: flex; align-items: flex-start; gap: 20px;
+    }
+    .cmd-row code {
+      font-family: var(--mono); font-size: 13px;
+      color: var(--accent); white-space: nowrap; flex-shrink: 0;
+      min-width: 260px;
+    }
+    .cmd-row span { color: var(--muted); font-size: 14px; line-height: 1.5; }
+
+    /* ── Install section ──────────────────────────────────────── */
+    .install-tabs { display: flex; gap: 4px; margin-bottom: 16px; }
+    .tab {
+      padding: 7px 16px; border-radius: 6px; font-size: 13px; font-weight: 600;
+      cursor: pointer; border: 1px solid transparent; color: var(--muted);
+      transition: all .2s; background: none;
+    }
+    .tab.active { background: var(--accent); color: #fff; border-color: transparent; }
+    .tab:hover:not(.active) { background: var(--surface2); border-color: var(--border); color: var(--text); }
+    .code-block {
+      background: var(--code-bg); border: 1px solid var(--border);
+      border-radius: 8px; padding: 20px 24px; position: relative;
+      font-family: var(--mono); font-size: 13.5px; line-height: 1.8;
+      overflow-x: auto;
+    }
+    .copy-btn {
+      position: absolute; top: 12px; right: 12px;
+      background: var(--surface2); border: 1px solid var(--border);
+      color: var(--muted); font-size: 12px; padding: 4px 10px; border-radius: 4px;
+      cursor: pointer; transition: all .2s; font-family: var(--font);
+    }
+    .copy-btn:hover { background: var(--border); color: var(--text); }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+
+    /* ── Privacy section ──────────────────────────────────────── */
+    .privacy-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 16px;
+    }
+    .privacy-item {
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 20px;
+    }
+    .privacy-item .privacy-icon { font-size: 24px; margin-bottom: 10px; }
+    .privacy-item h4 { font-size: 14px; font-weight: 700; margin-bottom: 5px; }
+    .privacy-item p { color: var(--muted); font-size: 13px; line-height: 1.5; }
+
+    /* ── Guide download ───────────────────────────────────────── */
+    .guide-card {
+      background: linear-gradient(135deg, rgba(79,142,247,.1) 0%, rgba(124,92,252,.1) 100%);
+      border: 1px solid rgba(79,142,247,.25);
+      border-radius: 16px; padding: 48px; text-align: center;
+    }
+    .guide-card h2 { margin-bottom: 12px; }
+    .guide-card p { color: var(--muted); margin-bottom: 28px; max-width: 480px; margin-left: auto; margin-right: auto; }
+    .guide-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+    /* ── Supported providers ──────────────────────────────────── */
+    .providers {
+      display: flex; flex-wrap: wrap; gap: 12px; align-items: center;
+    }
+    .provider-tag {
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 100px; padding: 6px 16px; font-size: 13px; font-weight: 600;
+      color: var(--muted);
+    }
+
+    /* ── Stats bar ────────────────────────────────────────────── */
+    .stats { display: flex; gap: 0; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+    .stat {
+      flex: 1; padding: 28px; text-align: center;
+      border-right: 1px solid var(--border);
+    }
+    .stat:last-child { border-right: none; }
+    .stat-num { font-size: 32px; font-weight: 800; color: var(--accent); display: block; }
+    .stat-label { font-size: 13px; color: var(--muted); margin-top: 4px; }
+
+    /* ── Footer ───────────────────────────────────────────────── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 40px 24px;
+      text-align: center;
+    }
+    .footer-links { display: flex; gap: 24px; justify-content: center; flex-wrap: wrap; margin-bottom: 20px; }
+    .footer-links a { color: var(--muted); font-size: 14px; transition: color .2s; }
+    .footer-links a:hover { color: var(--text); text-decoration: none; }
+    .footer-copy { color: var(--muted); font-size: 13px; }
+    .footer-mit { display: inline-flex; align-items: center; gap: 6px; }
+
+    /* ── Responsive ───────────────────────────────────────────── */
+    @media (max-width: 640px) {
+      .nav-links { display: none; }
+      .cmd-row { flex-direction: column; gap: 6px; }
+      .cmd-row code { min-width: unset; }
+      .stats { flex-direction: column; }
+      .stat { border-right: none; border-bottom: 1px solid var(--border); }
+      .stat:last-child { border-bottom: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ─────────────── NAV ─────────────── -->
+<nav>
+  <div class="nav-inner">
+    <a href="#" class="nav-logo" style="text-decoration:none">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="24" height="24" rx="6" fill="#4f8ef7"/>
+        <path d="M7 12h10M7 8h10M7 16h6" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      tokensense
+    </a>
+    <div class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#how-it-works">How It Works</a>
+      <a href="#install">Install</a>
+      <a href="#guide">Guide</a>
+      <a href="https://github.fkinternal.com/dibakshya-c/tokensense" target="_blank" rel="noopener noreferrer">Docs</a>
+      <a href="https://github.fkinternal.com/dibakshya-c/tokensense" target="_blank" rel="noopener noreferrer" class="nav-cta">GitHub →</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ─────────────── HERO ─────────────── -->
+<section class="hero">
+  <div class="container">
+    <div class="badge"><span class="badge-dot"></span> Open Source · MIT License</div>
+    <h1>Stop Overpaying for AI.<br>See Where Every Token Goes.</h1>
+    <p class="hero-sub">
+      Tokensense is a local HTTPS proxy that intercepts your AI API calls,
+      classifies them by task type, and shows you exactly where cheaper
+      models could save you money — without touching your data.
+    </p>
+    <div class="hero-actions">
+      <a href="#install" class="btn btn-primary">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1v10M4 8l4 4 4-4M2 13h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Get Started
+      </a>
+      <a href="https://github.fkinternal.com/dibakshya-c/tokensense" class="btn btn-secondary" target="_blank" rel="noopener noreferrer">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+        View on GitHub
+      </a>
+      <a href="https://github.fkinternal.com/dibakshya-c/tokensense/raw/main/docs/token-optimization-guide.md" class="btn btn-green" download>
+        ⬇ Token Guide (Free PDF)
+      </a>
+    </div>
+    <div class="hero-meta">
+      <span>🔒 100% Local — No data leaves your machine</span>
+      <span>⚡ Works with Cursor, Claude, VS Code, Windsurf</span>
+      <span>🌍 Anthropic, OpenAI, Google, Mistral, Groq, xAI</span>
+    </div>
+
+    <!-- Terminal Demo -->
+    <div class="terminal-wrap">
+      <div class="terminal">
+        <div class="terminal-bar">
+          <span class="terminal-dot dot-r"></span>
+          <span class="terminal-dot dot-y"></span>
+          <span class="terminal-dot dot-g"></span>
+          <span class="terminal-title">tokensense report</span>
+        </div>
+        <div class="terminal-body">
+          <div><span class="t-comment"># Today's AI usage report ─────────────────────────────────</span></div>
+          <div>&nbsp;</div>
+          <div><span class="t-blue">Tokensense Daily Report</span>  <span class="t-comment">2026-06-10</span></div>
+          <div><span class="t-comment">─────────────────────────────────────────────────────────</span></div>
+          <div>Total requests:  <span class="t-green">247</span>   &nbsp; Tokens:  <span class="t-green">1.2M in</span> / <span class="t-green">380K out</span></div>
+          <div>Today's cost:    <span class="t-amber">$4.87</span>   Optimized:  <span class="t-green">$1.12</span>  Savings: <span class="t-green">77%</span></div>
+          <div>&nbsp;</div>
+          <div><span class="t-blue">Task Breakdown</span></div>
+          <div><span class="t-comment">─────────────────────────────────────────────────────────</span></div>
+          <div><span class="t-amber">💰</span> code_generation  <span class="t-comment">84 reqs</span>  <span class="t-amber">$2.40</span>  → claude-haiku-3-5  saves <span class="t-green">$1.90</span></div>
+          <div><span class="t-amber">💰</span> debugging        <span class="t-comment">61 reqs</span>  <span class="t-amber">$1.20</span>  → claude-sonnet-4-5 saves <span class="t-green">$0.60</span></div>
+          <div><span class="t-green">✓</span>  test_generation  <span class="t-comment">52 reqs</span>  <span class="t-green">$0.28</span>  already optimal</div>
+          <div><span class="t-green">✓</span>  documentation    <span class="t-comment">50 reqs</span>  <span class="t-green">$0.21</span>  already optimal</div>
+          <div>&nbsp;</div>
+          <div><span class="t-blue">→</span> Switch code_generation tasks to claude-haiku-3-5 — save <span class="t-green">$1.90/day ($57/month)</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────── STATS ─────────────── -->
+<div class="container" style="padding: 0 24px;">
+  <div class="stats" style="margin: -20px 0 0;">
+    <div class="stat">
+      <span class="stat-num">7</span>
+      <div class="stat-label">AI Providers Supported</div>
+    </div>
+    <div class="stat">
+      <span class="stat-num">50+</span>
+      <div class="stat-label">Models Tracked</div>
+    </div>
+    <div class="stat">
+      <span class="stat-num">9</span>
+      <div class="stat-label">Task Types Classified</div>
+    </div>
+    <div class="stat">
+      <span class="stat-num">100%</span>
+      <div class="stat-label">Local — Zero Telemetry</div>
+    </div>
+  </div>
+</div>
+
+<!-- ─────────────── FEATURES ─────────────── -->
+<section class="section" id="features">
+  <div class="container">
+    <div class="section-label">Features</div>
+    <h2>Everything you need to control AI costs</h2>
+    <p class="section-sub">Built for developers and teams who want real visibility into AI spending without sending data to anyone.</p>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon" style="background: rgba(79,142,247,.12);">🔀</div>
+        <h3>Local HTTPS Proxy</h3>
+        <p>Transparently intercepts AI API calls on <code>127.0.0.1:7890</code>. Works with any tool that respects <code>HTTPS_PROXY</code> — no code changes needed.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background: rgba(48,217,122,.1);">🧠</div>
+        <h3>Task Classification</h3>
+        <p>Rule-based engine classifies every request (code generation, debugging, testing, docs, reasoning). Gemini API fallback for ambiguous prompts.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background: rgba(245,166,35,.1);">📊</div>
+        <h3>Daily Reports</h3>
+        <p>Terminal and HTML reports with cost breakdowns by task type, tool, and model. Specific savings recommendations — not generic advice.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background: rgba(124,92,252,.1);">💡</div>
+        <h3>Model Advisor</h3>
+        <p>Run <code>tokensense ask "..."</code> on any task description to instantly get ranked model recommendations with cost and quality scores.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background: rgba(79,142,247,.12);">👥</div>
+        <h3>Team Reports</h3>
+        <p>Export anonymized usage data as JSON. Merge multiple team exports into a single HTML report. Privacy-preserving — no prompt content included.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon" style="background: rgba(48,217,122,.1);">🔒</div>
+        <h3>Privacy First</h3>
+        <p>Prompt content is read in-memory for classification and immediately discarded. Only metadata (provider, model, token count, cost) is stored. No telemetry ever.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────── HOW IT WORKS ─────────────── -->
+<section class="section" id="how-it-works">
+  <div class="container">
+    <div class="section-label">How It Works</div>
+    <h2>Simple setup. Zero cloud dependency.</h2>
+    <p class="section-sub">Tokensense sits between your AI tools and the APIs. It sees what the model sees — and nothing else.</p>
+    <div class="flow">
+      <div class="flow-step">
+        <div class="flow-num">1</div>
+        <div>
+          <h3>Install & Setup</h3>
+          <p>Run the interactive wizard. It generates a local CA certificate, injects it into your OS trust store, sets the <code>HTTPS_PROXY</code> environment variable, and registers the proxy as a background service.</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">2</div>
+        <div>
+          <h3>Use AI Normally</h3>
+          <p>Your tools (Cursor, VS Code, Claude Desktop, your own scripts) route through the proxy automatically. For supported tools, the proxy does TLS interception. For cert-pinned tools, it runs in metadata-only mode.</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">3</div>
+        <div>
+          <h3>Classify &amp; Store</h3>
+          <p>Each request's prompt text is read in-memory, classified by task type, then immediately discarded. Only metadata (provider, model, task type, token count, cost) is written to a local SQLite database.</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">4</div>
+        <div>
+          <h3>Generate Reports</h3>
+          <p>Run <code>tokensense report</code> to see today's breakdown — costs by task type, savings potential, and specific model swap recommendations. Use <code>--html --open</code> for a full visual report in your browser.</p>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">5</div>
+        <div>
+          <h3>Ask the Advisor</h3>
+          <p>Run <code>tokensense ask "write unit tests for my auth module"</code> to instantly see which model gives the best value for that specific task — ranked by cost, speed, and quality score.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────── INSTALL ─────────────── -->
+<section class="section" id="install">
+  <div class="container">
+    <div class="section-label">Installation</div>
+    <h2>Up and running in under 2 minutes</h2>
+    <p class="section-sub">One command to install, one command to set up.</p>
+
+    <div class="install-tabs">
+      <button class="tab active" onclick="switchTab(this,'macos')">macOS / Linux</button>
+      <button class="tab" onclick="switchTab(this,'brew')">Homebrew</button>
+      <button class="tab" onclick="switchTab(this,'windows')">Windows</button>
+      <button class="tab" onclick="switchTab(this,'go')">Go install</button>
+    </div>
+
+    <div id="tab-macos" class="tab-panel active">
+      <div class="code-block">
+        <button class="copy-btn" onclick="copyCode(this,'macos')">Copy</button>
+        <pre id="code-macos"><span style="color:#7dd3fc">curl</span> -fsSL https://github.fkinternal.com/dibakshya-c/tokensense/raw/main/scripts/install.sh | sh
+<span style="color:#4a566a"># Then run setup</span>
+tokensense setup</pre>
+      </div>
+    </div>
+    <div id="tab-brew" class="tab-panel">
+      <div class="code-block">
+        <button class="copy-btn" onclick="copyCode(this,'brew')">Copy</button>
+        <pre id="code-brew"><span style="color:#7dd3fc">brew</span> install tokensense/tap/tokensense
+tokensense setup</pre>
+      </div>
+    </div>
+    <div id="tab-windows" class="tab-panel">
+      <div class="code-block">
+        <button class="copy-btn" onclick="copyCode(this,'windows')">Copy</button>
+        <pre id="code-windows"><span style="color:#4a566a"># Run in PowerShell as Administrator</span>
+<span style="color:#7dd3fc">irm</span> https://github.fkinternal.com/dibakshya-c/tokensense/raw/main/scripts/install.ps1 | iex
+tokensense setup</pre>
+      </div>
+    </div>
+    <div id="tab-go" class="tab-panel">
+      <div class="code-block">
+        <button class="copy-btn" onclick="copyCode(this,'go')">Copy</button>
+        <pre id="code-go"><span style="color:#7dd3fc">go</span> install github.fkinternal.com/dibakshya-c/tokensense@latest
+tokensense setup</pre>
+      </div>
+    </div>
+
+    <div style="margin-top: 48px;">
+      <div class="section-label" style="margin-bottom: 20px;">Commands</div>
+      <div class="cmd-grid">
+        <div class="cmd-row"><code>tokensense setup</code><span>Interactive setup wizard — cert, proxy, daemon, shell integration</span></div>
+        <div class="cmd-row"><code>tokensense status</code><span>Show proxy status, today's request count, and model matrix version</span></div>
+        <div class="cmd-row"><code>tokensense report</code><span>View today's cost breakdown and savings recommendations in terminal</span></div>
+        <div class="cmd-row"><code>tokensense report --html --open</code><span>Generate and open full HTML report with charts in browser</span></div>
+        <div class="cmd-row"><code>tokensense ask "..."</code><span>Get ranked model recommendations for any task description</span></div>
+        <div class="cmd-row"><code>tokensense tools status</code><span>Detect installed AI tools and their proxy compatibility</span></div>
+        <div class="cmd-row"><code>tokensense export</code><span>Export 30-day anonymized usage data as JSON for team sharing</span></div>
+        <div class="cmd-row"><code>tokensense merge a.json b.json</code><span>Merge multiple team exports into a combined HTML report</span></div>
+        <div class="cmd-row"><code>tokensense config set key value</code><span>Set a configuration value (privacy_mode, report_time, etc.)</span></div>
+        <div class="cmd-row"><code>tokensense uninstall</code><span>Complete removal — cert, service, profiles, and data</span></div>
+      </div>
+    </div>
+
+    <div style="margin-top: 40px;">
+      <div class="section-label" style="margin-bottom: 16px;">Supported Providers</div>
+      <div class="providers">
+        <span class="provider-tag">Anthropic / Claude</span>
+        <span class="provider-tag">OpenAI / GPT</span>
+        <span class="provider-tag">Google Gemini</span>
+        <span class="provider-tag">Mistral</span>
+        <span class="provider-tag">Cohere</span>
+        <span class="provider-tag">Groq</span>
+        <span class="provider-tag">xAI / Grok</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────── PRIVACY ─────────────── -->
+<section class="section">
+  <div class="container">
+    <div class="section-label">Privacy</div>
+    <h2>Your prompts are never stored.</h2>
+    <p class="section-sub">We built Tokensense around a simple principle: the tool that helps you optimize your AI usage should never see what you're working on.</p>
+    <div class="privacy-grid">
+      <div class="privacy-item">
+        <div class="privacy-icon">🧠</div>
+        <h4>In-Memory Only</h4>
+        <p>Prompt content is read in-memory for classification, then immediately discarded and eligible for garbage collection.</p>
+      </div>
+      <div class="privacy-item">
+        <div class="privacy-icon">🗄️</div>
+        <h4>Metadata Only in DB</h4>
+        <p>SQLite stores only: provider, model, task type, token count, cost, latency. Never prompt text.</p>
+      </div>
+      <div class="privacy-item">
+        <div class="privacy-icon">🌐</div>
+        <h4>No External Calls</h4>
+        <p>The proxy runs entirely offline. The only external call is the optional model matrix update from GitHub.</p>
+      </div>
+      <div class="privacy-item">
+        <div class="privacy-icon">📵</div>
+        <h4>Zero Telemetry</h4>
+        <p>No analytics. No error reporting. No install ID pings. Your usage data belongs to you.</p>
+      </div>
+      <div class="privacy-item">
+        <div class="privacy-icon">🔑</div>
+        <h4>Local CA Key</h4>
+        <p>The TLS interception CA key is unique per install, stored with 0600 permissions, never transmitted.</p>
+      </div>
+      <div class="privacy-item">
+        <div class="privacy-icon">🛡️</div>
+        <h4>Metadata-Only Mode</h4>
+        <p>Enable metadata-only mode to skip content reading entirely — for maximum privacy with cert-pinned tools.</p>
+      </div>
+    </div>
+    <p style="margin-top: 24px; color: var(--muted); font-size: 14px;">
+      → Read the full <a href="https://github.fkinternal.com/dibakshya-c/tokensense/blob/main/docs/privacy.md" target="_blank" rel="noopener noreferrer">privacy documentation</a>
+    </p>
+  </div>
+</section>
+
+<!-- ─────────────── TOKEN GUIDE ─────────────── -->
+<section class="section" id="guide">
+  <div class="container">
+    <div class="guide-card">
+      <div style="font-size: 48px; margin-bottom: 16px;">📘</div>
+      <h2>Token Optimization for Dummies</h2>
+      <p>A comprehensive guide to AI token economics — from basic generation to agents and workflows. Covers every provider, every use case, and every common mistake. Free forever.</p>
+      <div class="guide-actions">
+        <a href="https://github.fkinternal.com/dibakshya-c/tokensense/raw/main/docs/token-optimization-guide.md" class="btn btn-primary" download>
+          ⬇ Download Guide (.md)
+        </a>
+        <a href="https://github.fkinternal.com/dibakshya-c/tokensense/blob/main/docs/token-optimization-guide.md" class="btn btn-secondary" target="_blank" rel="noopener noreferrer">
+          Read Online →
+        </a>
+      </div>
+      <div style="margin-top: 28px; color: var(--muted); font-size: 13px; display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+        <span>📖 10 chapters</span>
+        <span>💡 50+ practical examples</span>
+        <span>⚠️ Common mistakes covered</span>
+        <span>🤖 Agents &amp; workflows</span>
+        <span>🖼️ Multimodal optimization</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─────────────── FOOTER ─────────────── -->
+<footer>
+  <div class="container">
+    <div class="footer-links">
+      <a href="https://github.fkinternal.com/dibakshya-c/tokensense" target="_blank" rel="noopener noreferrer">GitHub</a>
+      <a href="https://github.fkinternal.com/dibakshya-c/tokensense/blob/main/README.md" target="_blank" rel="noopener noreferrer">Documentation</a>
+      <a href="https://github.fkinternal.com/dibakshya-c/tokensense/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener noreferrer">Contributing</a>
+      <a href="https://github.fkinternal.com/dibakshya-c/tokensense/blob/main/docs/privacy.md" target="_blank" rel="noopener noreferrer">Privacy Policy</a>
+      <a href="https://github.fkinternal.com/dibakshya-c/tokensense/issues" target="_blank" rel="noopener noreferrer">Issues</a>
+      <a href="https://github.fkinternal.com/dibakshya-c/tokensense/raw/main/docs/token-optimization-guide.md" download>Token Guide</a>
+    </div>
+    <div class="footer-copy">
+      <span class="footer-mit">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="#4f8ef7"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+        <a href="https://github.fkinternal.com/dibakshya-c/tokensense/blob/main/LICENSE" target="_blank" rel="noopener noreferrer">MIT License</a>
+      </span>
+      &nbsp;·&nbsp;
+      Built with ♥ for developers who want to understand their AI spending
+    </div>
+    <div style="margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--border);">
+      <span style="color: var(--muted); font-size: 13px;">
+        Created by <strong style="color: var(--text);">Dibakshya Chakraborty</strong>
+        <span style="color: var(--border); margin: 0 8px;">·</span>
+        <span style="color: var(--muted);">Product Builder</span>
+      </span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Tab switching — accepts explicit element reference to avoid relying on
+  // window.event, which is unreliable inside sandboxed iframes (e.g. Google Sites).
+  function switchTab(el, id) {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('tab-' + id).classList.add('active');
+  }
+
+  // Copy code — accepts explicit element reference for the same reason.
+  // Falls back to execCommand('copy') when navigator.clipboard is unavailable
+  // (Google Sites iframes do not delegate the clipboard-write permissions policy).
+  function copyCode(el, id) {
+    const text = document.getElementById('code-' + id).textContent;
+
+    function onCopied() {
+      el.textContent = 'Copied!';
+      setTimeout(function() { el.textContent = 'Copy'; }, 2000);
+    }
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(onCopied).catch(function() {
+        fallbackCopy(text, onCopied);
+      });
+    } else {
+      fallbackCopy(text, onCopied);
+    }
+  }
+
+  function fallbackCopy(text, callback) {
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.top = '-9999px';
+    ta.style.left = '-9999px';
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    try {
+      document.execCommand('copy');
+      if (callback) callback();
+    } catch (e) {
+      // copy not supported in this context — silently ignore
+    }
+    document.body.removeChild(ta);
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,39 @@
+# Compiled binaries
+tokensense
+tokensense.exe
+dist/
+
+# SQLite databases
+*.db
+*.db-shm
+*.db-wal
+
+# TLS / CA certs
+*.key
+*.crt
+*.pem
+
+# Reports output
+reports/
+
+# Test binaries
+*.test
+
+# macOS
+.DS_Store
+.AppleDouble
+
+# Editor temp files
+*.log
+*.tmp
+*.bak
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# goreleaser artifacts
+dist/
+
+# Go build cache hints
+vendor/

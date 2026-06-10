@@ -95,18 +95,23 @@ Your AI Tool → Local HTTPS Proxy (127.0.0.1:7890) → AI API
 
 | Command | Description |
 |---------|-------------|
-| `tokensense setup` | First-time setup wizard |
-| `tokensense start` | Start the proxy daemon |
-| `tokensense stop` | Stop the proxy daemon |
-| `tokensense status` | Show proxy status and today's stats |
-| `tokensense report` | View daily report (terminal) |
-| `tokensense report --html --open` | Generate and open HTML report |
-| `tokensense ask "..."` | Get model recommendations for a task |
-| `tokensense tools status` | Show detected AI tools |
-| `tokensense config set/get/list` | Manage configuration |
-| `tokensense export` | Export usage data as JSON |
-| `tokensense merge file1.json file2.json` | Merge exports into team report |
-| `tokensense uninstall` | Remove everything |
+| Command | What it does (plain English) |
+|---------|------------------------------|
+| `tokensense setup` | Run this once after install — sets everything up with a wizard |
+| `tokensense start` | Turn on tracking (also runs automatically at login) |
+| `tokensense stop` | Pause tracking temporarily |
+| `tokensense status` | See if the proxy is on and how many AI calls happened today |
+| `tokensense status --json` | Same, but as machine-readable JSON (for agents/scripts) |
+| `tokensense report` | View today's cost breakdown and savings tips |
+| `tokensense report --html --open` | Open a visual chart report in your browser |
+| `tokensense report --json` | Machine-readable JSON report (for agents/scripts) |
+| `tokensense ask "..."` | Describe a task — get the best model for it |
+| `tokensense api` | Start a local JSON API on port 7891 (for developers & agents) |
+| `tokensense tools status` | See which AI tools (Cursor, Claude, Copilot…) are being tracked |
+| `tokensense config set/get/list` | View and change settings |
+| `tokensense export` | Download your usage data as JSON or CSV |
+| `tokensense merge file1 file2` | Combine usage data from teammates into one report |
+| `tokensense uninstall` | Remove everything cleanly |
 
 ## Configuration
 
@@ -121,6 +126,72 @@ log_level: "info"
 cloud_fallback: true
 matrix_auto_update: true
 confidence_threshold: 0.6
+```
+
+## Developer & Agent Integration
+
+Tokensense exposes a **local JSON API** so you can integrate it into your own AI tools, agents, or dashboards.
+
+### Start the API
+
+```bash
+tokensense api              # starts on http://localhost:7891
+tokensense api --port 8080  # custom port
+```
+
+### Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/v1/status` | Proxy status + today's request count |
+| `GET` | `/v1/report?date=YYYY-MM-DD` | Full cost & savings report as JSON |
+| `POST` | `/v1/classify` | Classify a prompt → task type + model recommendations |
+| `GET` | `/v1/usage?limit=N&date=YYYY-MM-DD` | Raw usage records |
+| `GET` | `/v1/docs` | Full API reference |
+
+### Python Example (Agent Cost Guard)
+
+```python
+import requests
+
+# Check today's spend before routing to an expensive model
+report = requests.get("http://localhost:7891/v1/report").json()
+if report["total_cost_usd"] > 0.50:
+    print("Daily budget hit — routing to cheaper model")
+
+# Classify a task before picking a model
+result = requests.post("http://localhost:7891/v1/classify",
+    json={"prompt": "write unit tests for my auth module"}).json()
+
+print(result["task_type"])        # → "test_generation"
+print(result["complexity"])       # → "medium"
+best = result["recommendations"][0]
+print(best["display_name"])       # → "Gemini 2.5 Flash"
+print(best["cost_per_request_usd"])
+```
+
+### Shell / jq
+
+```bash
+# Get today's savings potential
+tokensense report --json | jq '.savings_potential_usd'
+
+# Check if proxy is running from a script
+tokensense status --json | jq '.proxy_running'
+
+# Classify a prompt via the API
+curl -s -X POST http://localhost:7891/v1/classify \
+  -H "Content-Type: application/json" \
+  -d '{"prompt":"summarize this document"}' | jq '.task_type'
+```
+
+### JavaScript / Node.js
+
+```js
+const res = await fetch('http://localhost:7891/v1/report');
+const report = await res.json();
+console.log(`Spent today: $${report.total_cost_usd.toFixed(4)}`);
+console.log(`Could save: $${report.savings_potential_usd.toFixed(4)}`);
 ```
 
 ## Contributing

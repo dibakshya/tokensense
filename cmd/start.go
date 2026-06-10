@@ -100,7 +100,32 @@ var startCmd = &cobra.Command{
 			cancel()
 		}()
 
-		fmt.Printf("Tokensense proxy starting on %s\n", addr)
+		fmt.Println()
+		fmt.Println(bold("  ╔══════════════════════════════════════════════════╗"))
+		fmt.Println(bold("  ║") + green("  ▶️   Tokensense proxy is running               ") + bold("║"))
+		fmt.Println(bold("  ╚══════════════════════════════════════════════════╝"))
+		fmt.Println()
+		fmt.Printf("  Listening on:  %s\n", cyan(addr))
+		fmt.Printf("  Privacy mode:  %s\n", cyan(contentModeLabel(contentMode)))
+		fmt.Println()
+		fmt.Println(dim("  Your AI tool calls are now being tracked silently."))
+		fmt.Println(dim("  No prompts or responses are stored — only metadata."))
+		fmt.Println()
+		fmt.Println(bold("  What to do next:"))
+		fmt.Printf("  %-35s →  %s\n", "Check today's stats", cyan("tokensense status"))
+		fmt.Printf("  %-35s →  %s\n", "View cost breakdown", cyan("tokensense report"))
+		fmt.Printf("  %-35s →  %s\n", "Open visual report", cyan("tokensense report --html --open"))
+		fmt.Printf("  %-35s →  %s\n", "For developers/agents", cyan("tokensense api"))
+		fmt.Println()
+		fmt.Println(dim("  Press Ctrl+C to stop."))
+		fmt.Println()
 		return srv.ListenAndServe()
 	},
+}
+
+func contentModeLabel(contentMode bool) string {
+	if contentMode {
+		return "content (full classification)"
+	}
+	return "metadata only (privacy-safe)"
 }

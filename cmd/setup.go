@@ -110,12 +110,14 @@ var setupCmd = &cobra.Command{
 			fmt.Println("Start manually with: tokensense start")
 		}
 
-		fmt.Println("\n✅ Setup complete! Restart your terminal to activate the proxy.")
-
 		// Save the token optimization guide to the desktop on first run
 		if len(BundledGuide) > 0 {
 			saveGuideToDesktop()
 		}
+
+		PrintWelcomeBanner()
+		fmt.Println("  ⚡  Restart your terminal (or open a new tab) to activate the proxy.")
+		fmt.Println()
 
 		return nil
 	},

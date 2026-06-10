@@ -343,6 +343,7 @@
       <a href="javascript:void(0)" onclick="document.getElementById('features').scrollIntoView({behavior:'smooth'})">Features</a>
       <a href="javascript:void(0)" onclick="document.getElementById('how-it-works').scrollIntoView({behavior:'smooth'})">How It Works</a>
       <a href="javascript:void(0)" onclick="document.getElementById('install').scrollIntoView({behavior:'smooth'})">Install</a>
+      <a href="javascript:void(0)" onclick="document.getElementById('developers').scrollIntoView({behavior:'smooth'})">Developers</a>
       <a href="javascript:void(0)" onclick="document.getElementById('guide').scrollIntoView({behavior:'smooth'})">Guide</a>
       <a href="https://github.com/dibakshya/tokensense" target="_blank" rel="noopener noreferrer">Docs</a>
       <a href="https://github.com/dibakshya/tokensense" target="_blank" rel="noopener noreferrer" class="nav-cta">GitHub →</a>
@@ -636,6 +637,102 @@ tokensense setup</pre>
     <p style="margin-top: 24px; color: var(--muted); font-size: 14px;">
       → Read the full <a href="https://github.com/dibakshya/tokensense/blob/main/docs/privacy.md" target="_blank" rel="noopener noreferrer">privacy documentation</a>
     </p>
+  </div>
+</section>
+
+<!-- ─────────────── DEVELOPER / AGENT INTEGRATION ─────────────── -->
+<section class="section" id="developers" style="background:var(--surface)">
+  <div class="container">
+    <div class="section-label">For Developers &amp; Agent Builders</div>
+    <h2>Integrate Tokensense into Any AI Tool or Agent</h2>
+    <p class="section-sub">Expose live cost and classification data to your own apps, scripts, or LLM agents via a local JSON API — no cloud, no keys.</p>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:start">
+
+      <!-- Left: API endpoints -->
+      <div>
+        <h3 style="color:var(--text);font-size:18px;margin-bottom:16px">🔌 Local JSON API</h3>
+        <p style="color:var(--muted);font-size:14px;margin-bottom:20px">Run <code style="background:var(--code-bg);padding:2px 6px;border-radius:4px">tokensense api</code> to start a lightweight HTTP server on <strong style="color:var(--accent)">localhost:7891</strong>. Any app, agent, or script can query it.</p>
+
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <div style="background:var(--code-bg);border:1px solid var(--border);border-radius:8px;padding:14px 16px">
+            <div style="font-size:11px;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.8px">GET</div>
+            <code style="color:var(--accent);font-size:13px">/v1/status</code>
+            <p style="color:var(--muted);font-size:12px;margin:4px 0 0">Proxy on/off + today's call count</p>
+          </div>
+          <div style="background:var(--code-bg);border:1px solid var(--border);border-radius:8px;padding:14px 16px">
+            <div style="font-size:11px;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.8px">GET</div>
+            <code style="color:var(--accent);font-size:13px">/v1/report?date=YYYY-MM-DD</code>
+            <p style="color:var(--muted);font-size:12px;margin:4px 0 0">Full cost &amp; savings breakdown as JSON</p>
+          </div>
+          <div style="background:var(--code-bg);border:1px solid var(--border);border-radius:8px;padding:14px 16px">
+            <div style="font-size:11px;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.8px">POST</div>
+            <code style="color:var(--accent);font-size:13px">/v1/classify</code>
+            <p style="color:var(--muted);font-size:12px;margin:4px 0 0">Classify a prompt → task type + model recommendations</p>
+          </div>
+          <div style="background:var(--code-bg);border:1px solid var(--border);border-radius:8px;padding:14px 16px">
+            <div style="font-size:11px;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.8px">GET</div>
+            <code style="color:var(--accent);font-size:13px">/v1/usage?limit=N</code>
+            <p style="color:var(--muted);font-size:12px;margin:4px 0 0">Raw usage records for any date</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Code examples -->
+      <div>
+        <h3 style="color:var(--text);font-size:18px;margin-bottom:16px">🐍 Python Agent Example</h3>
+        <div class="terminal" style="max-width:100%">
+          <div class="terminal-bar">
+            <div class="terminal-dot dot-r"></div><div class="terminal-dot dot-y"></div><div class="terminal-dot dot-g"></div>
+            <span class="terminal-title">agent_cost_guard.py</span>
+          </div>
+          <div class="terminal-body" style="font-size:12px">
+<span style="color:#7c5cfc">import</span> <span class="t-blue">requests</span><br>
+<br>
+<span style="color:#4a566a"># Before calling an expensive model, check spend</span><br>
+<span class="t-green">report</span> = <span class="t-blue">requests</span>.<span class="t-cmd">get</span>(<br>
+&nbsp;&nbsp;<span style="color:#86efac">"http://localhost:7891/v1/report"</span><br>
+).<span class="t-cmd">json</span>()<br>
+<br>
+<span style="color:#7c5cfc">if</span> <span class="t-green">report</span>[<span style="color:#86efac">"total_cost_usd"</span>] &gt; <span style="color:#fda4af">0.50</span>:<br>
+&nbsp;&nbsp;<span class="t-cmd">print</span>(<span style="color:#86efac">"Daily budget hit — routing to cheaper model"</span>)<br>
+<br>
+<span style="color:#4a566a"># Classify a task before picking a model</span><br>
+<span class="t-green">result</span> = <span class="t-blue">requests</span>.<span class="t-cmd">post</span>(<br>
+&nbsp;&nbsp;<span style="color:#86efac">"http://localhost:7891/v1/classify"</span>,<br>
+&nbsp;&nbsp;<span class="t-blue">json</span>={<span style="color:#86efac">"prompt"</span>: <span style="color:#86efac">"write unit tests"</span>}<br>
+).<span class="t-cmd">json</span>()<br>
+<br>
+<span class="t-cmd">print</span>(<span class="t-green">result</span>[<span style="color:#86efac">"recommendations"</span>][<span style="color:#fda4af">0</span>][<span style="color:#86efac">"display_name"</span>])<br>
+<span style="color:#4a566a"># → "Gemini 2.5 Flash"</span>
+          </div>
+        </div>
+
+        <h3 style="color:var(--text);font-size:18px;margin:24px 0 12px">⚡ JSON flags for shell scripts</h3>
+        <div class="terminal" style="max-width:100%">
+          <div class="terminal-bar">
+            <div class="terminal-dot dot-r"></div><div class="terminal-dot dot-y"></div><div class="terminal-dot dot-g"></div>
+            <span class="terminal-title">shell</span>
+          </div>
+          <div class="terminal-body" style="font-size:12px">
+<span class="t-prompt">$</span> <span class="t-cmd">tokensense status --json</span><br>
+<span style="color:#4a566a">{ "proxy_running": true, "requests_today": 42, ... }</span><br>
+<br>
+<span class="t-prompt">$</span> <span class="t-cmd">tokensense report --json | jq '.savings_potential_usd'</span><br>
+<span style="color:#fda4af">0.0312</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div style="margin-top:36px;padding:20px 24px;background:var(--code-bg);border:1px solid var(--border);border-radius:10px;display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+      <div>
+        <div style="font-weight:700;color:var(--text);margin-bottom:4px">Start the API in one command</div>
+        <code style="color:var(--accent);font-size:15px">tokensense api</code>
+        <span style="color:var(--muted);font-size:13px;margin-left:12px">then open <strong style="color:var(--accent)">http://localhost:7891/v1/docs</strong> for the full reference</span>
+      </div>
+    </div>
   </div>
 </section>
 

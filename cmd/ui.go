@@ -33,6 +33,12 @@ type cmdEntry struct {
 	plain string // plain-English description for non-technical users
 }
 
+var startCmds = []cmdEntry{
+	{"tokensense", "Open the browser dashboard (default — no arguments needed)"},
+	{"tokensense dashboard", "Open the browser control panel — start/stop, reports, settings"},
+	{"tokensense setup", "First-time setup wizard — run this once after installing"},
+}
+
 var trackCmds = []cmdEntry{
 	{"tokensense status", "See if the proxy is on + how many AI calls happened today"},
 	{"tokensense report", "View today's cost breakdown and where you could save money"},
@@ -46,9 +52,12 @@ var controlCmds = []cmdEntry{
 }
 
 var deepCmds = []cmdEntry{
-	{`tokensense ask "I need to build an API"`, "Get model recommendations for any task you describe"},
-	{"tokensense export", "Download all your usage data as JSON or CSV"},
-	{"tokensense config list", "View and change settings"},
+	{`tokensense ask "describe a task"`, "Get model recommendations for any task you describe"},
+	{"tokensense export", "Download your usage data as JSON or CSV"},
+	{"tokensense merge file1 file2", "Combine teammates' usage exports into one team report"},
+	{"tokensense config list", "View all settings"},
+	{"tokensense config set key value", "Change a setting (e.g. privacy_mode, report_time)"},
+	{"tokensense uninstall", "Remove everything — cert, service, data, and shell config"},
 }
 
 var devCmds = []cmdEntry{
@@ -103,6 +112,7 @@ func PrintSetupComplete(proxyStarted bool) {
 	fmt.Println(w + dim("Prefer the terminal? Here's everything you can do:"))
 	fmt.Println()
 
+	printSection("🚀  GET STARTED", startCmds, bar)
 	printSection("📊  TRACK YOUR USAGE", trackCmds, bar)
 	printSection("⚙️   CONTROL THE PROXY", controlCmds, bar)
 	printSection("🔍  DIVE DEEPER", deepCmds, bar)
@@ -166,16 +176,15 @@ func PrintNextSteps(currentCmd string) {
 // ── Compact command reference (printed inside status/report) ─────────────────
 
 func PrintCommandRef() {
-	bar := "  " + strings.Repeat("─", 50)
+	bar := "  " + strings.Repeat("─", 54)
 	fmt.Println()
 	fmt.Println(bar)
 	fmt.Println(bold("  🗂  All Commands"))
 	fmt.Println(bar)
-	for _, e := range append(append(trackCmds, controlCmds...), deepCmds...) {
-		fmt.Printf("  %-42s %s\n", cyan(e.cmd), dim(e.plain))
+	all := append(append(append(append(startCmds, trackCmds...), controlCmds...), deepCmds...), devCmds...)
+	for _, e := range all {
+		fmt.Printf("  %-44s %s\n", cyan(e.cmd), dim(e.plain))
 	}
-	fmt.Println(bar)
-	fmt.Printf("  %-42s %s\n", cyan("tokensense api"), dim("Start JSON API for developers & agents"))
 	fmt.Println(bar)
 	fmt.Println()
 }

@@ -4,58 +4,62 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/dibakshya/tokensense)](https://goreportcard.com/report/github.com/dibakshya/tokensense)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-**Open-source AI token usage optimizer.** A local CLI tool that intercepts AI API calls, classifies each request by task type, and shows you where cheaper models could have been used — saving you money without losing quality.
+**Open-source AI token usage optimizer.** A local CLI tool that intercepts your AI API calls, classifies each request by task type, and shows you exactly where cheaper models could save you money — without touching your data.
 
 ## Features
 
+- **Browser dashboard** — start/stop tracking, live cost breakdown, and settings — all in your browser, no terminal needed
 - **Local HTTPS proxy** — transparently intercepts AI API calls (Anthropic, OpenAI, Google, Mistral, Cohere, Groq, xAI)
-- **Task classification** — rule-based engine classifies each request (code generation, debugging, testing, etc.)
-- **Daily reports** — terminal + HTML reports with cost breakdown and savings recommendations
-- **Model advisor** — `tokensense ask "..."` recommends the optimal model for any task
-- **Team reports** — export and merge usage data across team members
+- **Task classification** — rule-based engine classifies each request (code generation, debugging, testing, docs, reasoning)
+- **Daily reports** — terminal + HTML reports with per-task cost breakdown and specific model swap recommendations
+- **Model advisor** — `tokensense ask "..."` recommends the best model for any task description
+- **Team reports** — export and merge usage data across team members (privacy-preserving)
+- **Developer API** — local JSON API on `localhost:7891` for integrating cost data into agents and tools
 - **100% local** — no server, no account, no cloud dependency, no telemetry
+
+---
 
 ## Browser Dashboard
 
-The easiest way to use Tokensense — no terminal commands needed after setup.
+The easiest way to use Tokensense. No terminal commands needed after setup.
 
 ```bash
 tokensense dashboard   # opens http://localhost:7892 in your browser
-tokensense             # same thing — dashboard is the default
+tokensense             # same — dashboard is the default with no arguments
 ```
 
 The dashboard lets you:
-- **Start / stop** the proxy with one click (big green/red button)
-- **See today's cost breakdown** — live, refreshed every 6 seconds
-- **Spot savings** — highlighted recommendations per task type
-- **Change settings** — privacy mode, report time — no config files
+- **Start / stop** the proxy with one click (big green/red button — state unmistakable at a glance)
+- **Live cost breakdown** — refreshed every 6 seconds: spend, potential savings, task breakdown
+- **Spot savings** — per task type: "💰 switch to haiku-3-5 → save $1.90/day"
+- **Change settings** — privacy mode, daily report time — no config files to edit
 
 The CLI is still fully available for power users and scripting.
 
 ---
 
-## Quick Start (< 2 minutes)
+## Quick Start
 
-### Install
+### 1. Install
 
 ```bash
-# macOS / Linux
+# macOS / Linux — binary install (recommended)
 curl -fsSL https://raw.githubusercontent.com/dibakshya/tokensense/main/scripts/install.sh | sh
 
 # Homebrew
 brew install tokensense/tap/tokensense
 
-# Windows (PowerShell)
+# Windows (PowerShell as Administrator)
 irm https://raw.githubusercontent.com/dibakshya/tokensense/main/scripts/install.ps1 | iex
 
 # Go install
 go install github.com/dibakshya/tokensense@latest
-# Then add Go's bin dir to PATH so the command is findable (one-time):
+# First time only — add Go's bin dir to PATH:
 echo 'export PATH="$PATH:$HOME/go/bin"' >> ~/.zshrc && source ~/.zshrc
 # (replace ~/.zshrc with ~/.bashrc if you use bash)
 ```
 
-### Setup
+### 2. Setup (one-time, ~2 minutes)
 
 ```bash
 tokensense setup
@@ -68,91 +72,113 @@ The interactive wizard will:
 4. Set your daily report time
 5. Register and start the background proxy
 
-### Use
+### 3. Open the dashboard
 
 ```bash
-# Work normally — AI calls route through the proxy automatically
-
-# Check status
-tokensense status
-
-# View today's report
-tokensense report
-
-# Get model recommendations
-tokensense ask "write unit tests for my auth module"
-
-# View detected tools
-tokensense tools status
+tokensense dashboard
+# or just: tokensense
 ```
+
+Or use the terminal:
+
+```bash
+tokensense start          # start tracking
+tokensense status         # see if proxy is on + today's call count
+tokensense report         # view today's cost breakdown
+tokensense ask "..."      # get model recommendation for any task
+```
+
+---
 
 ## How It Works
 
 ```
 Your AI Tool → Local HTTPS Proxy (127.0.0.1:7890) → AI API
                      ↓
-              Task Classifier (in-memory, no persistence)
+              Task Classifier (in-memory — content never stored)
                      ↓
-              SQLite Metadata Store (task type, model, cost — never prompt content)
+              SQLite Metadata Store (task type, model, cost only)
                      ↓
-              Daily Report + Model Advisor
+              Browser Dashboard + Daily Reports + Model Advisor
 ```
 
-1. **Proxy** — listens on `127.0.0.1:7890`, intercepts CONNECT requests to AI APIs
-2. **Classifier** — reads request body in-memory to determine task type (code generation, debugging, etc.), then immediately discards the content
+1. **Proxy** — listens on `127.0.0.1:7890`, intercepts CONNECT tunnels to AI API domains
+2. **Classifier** — reads the request body in-memory to determine task type, then immediately discards it
 3. **Storage** — writes only metadata (provider, model, token count, cost, task type) to local SQLite
-4. **Reports** — generates daily cost analysis with specific model swap recommendations
-5. **Advisor** — classifies any task description and recommends the most cost-effective model
+4. **Reports** — daily cost analysis with specific model swap recommendations
+5. **Dashboard** — browser UI at `localhost:7892` with live stats and one-click proxy control
+6. **Advisor** — classifies any task description and recommends the most cost-effective model
+
+---
 
 ## Privacy
 
-- **No prompt content is ever stored.** Classification happens in-memory; content is immediately discarded.
-- **No data leaves your machine.** Everything runs locally.
-- **No telemetry.** No analytics. No error reporting.
-- **Metadata-only mode** available for maximum privacy (sees only provider, model, token count).
-- **CA key is unique** per install with 0600 permissions.
-- See [docs/privacy.md](docs/privacy.md) for details.
+- **No prompt content is ever stored.** Classification happens in-memory; content is discarded immediately after.
+- **No data leaves your machine.** Everything runs locally — proxy, database, dashboard, and API.
+- **No telemetry.** No analytics, no error reporting, no install pings.
+- **Metadata-only mode** — skips content reading entirely. Records only provider, model, and token count.
+- **CA key is unique** per install, stored with 0600 permissions, never transmitted.
+- See [docs/privacy.md](docs/privacy.md) for full details.
+
+---
 
 ## Commands
 
-| Command | What it does (plain English) |
-|---------|------------------------------|
-| `tokensense` | Opens the browser dashboard — default when run with no arguments |
-| `tokensense dashboard` | Open the browser control panel (start/stop, reports, settings) |
-| `tokensense setup` | Run this once after install — sets everything up with a wizard |
-| `tokensense start` | Turn on tracking (also runs automatically at login) |
+| Command | What it does |
+|---------|--------------|
+| `tokensense` | Open the browser dashboard (default — no arguments needed) |
+| `tokensense dashboard` | Open the browser control panel at localhost:7892 |
+| `tokensense setup` | First-time setup wizard — run once after installing |
+| `tokensense start` | Start the tracking proxy (also starts automatically at login) |
 | `tokensense stop` | Pause tracking temporarily |
-| `tokensense status` | See if the proxy is on and how many AI calls happened today |
-| `tokensense status --json` | Same, but as machine-readable JSON (for agents/scripts) |
-| `tokensense report` | View today's cost breakdown and savings tips |
-| `tokensense report --html --open` | Open a visual chart report in your browser |
-| `tokensense report --json` | Machine-readable JSON report (for agents/scripts) |
-| `tokensense ask "..."` | Describe a task — get the best model for it |
-| `tokensense api` | Start a local JSON API on port 7891 (for developers & agents) |
+| `tokensense status` | Check if the proxy is on + today's call count |
+| `tokensense status --json` | Same, as machine-readable JSON (for scripts / agents) |
+| `tokensense report` | View today's cost breakdown and savings tips in the terminal |
+| `tokensense report --html --open` | Generate and open a visual HTML report in your browser |
+| `tokensense report --json` | Full report as machine-readable JSON |
+| `tokensense report --date YYYY-MM-DD` | Report for a specific past date |
+| `tokensense ask "describe a task"` | Get ranked model recommendations for any task |
+| `tokensense api` | Start a local JSON API on localhost:7891 (for developers & agents) |
+| `tokensense api --port 8080` | Same, on a custom port |
 | `tokensense tools status` | See which AI tools (Cursor, Claude, Copilot…) are being tracked |
-| `tokensense config set/get/list` | View and change settings |
 | `tokensense export` | Download your usage data as JSON or CSV |
-| `tokensense merge file1 file2` | Combine usage data from teammates into one report |
-| `tokensense uninstall` | Remove everything cleanly |
+| `tokensense merge file1 file2` | Combine teammates' exports into one team report |
+| `tokensense config list` | View all current settings |
+| `tokensense config get key` | Get the value of one setting |
+| `tokensense config set key value` | Change a setting |
+| `tokensense version` | Show version, commit, and build date |
+| `tokensense uninstall` | Remove everything — cert, service, data, and shell config |
+
+---
 
 ## Configuration
 
-Config stored in `~/.tokensense/config.yaml`:
+Config file: `~/.tokensense/config.yaml`
 
-```yaml
-proxy_port: 7890
-proxy_host: "127.0.0.1"
-privacy_mode: "content"     # "content" or "metadata"
-report_time: "18:00"
-log_level: "info"
-cloud_fallback: true
-matrix_auto_update: true
-confidence_threshold: 0.6
+Use `tokensense config set` to change settings — no need to edit the file directly.
+
+```bash
+tokensense config list                        # view all settings
+tokensense config set privacy_mode metadata   # switch to metadata-only mode
+tokensense config set report_time 09:00       # change daily report time
 ```
+
+| Key | Default | Values |
+|-----|---------|--------|
+| `proxy_port` | `7890` | Any free port |
+| `proxy_host` | `127.0.0.1` | Loopback address |
+| `privacy_mode` | `content` | `content` or `metadata` |
+| `report_time` | `18:00` | `HH:MM` (24-hour) |
+| `log_level` | `info` | `debug`, `info`, `warn`, `error` |
+| `cloud_fallback` | `true` | `true` / `false` |
+| `matrix_auto_update` | `true` | `true` / `false` |
+| `confidence_threshold` | `0.6` | 0.0 – 1.0 |
+
+---
 
 ## Developer & Agent Integration
 
-Tokensense exposes a **local JSON API** so you can integrate it into your own AI tools, agents, or dashboards.
+Tokensense exposes a local JSON API for integrating cost data into your own tools, agents, or dashboards.
 
 ### Start the API
 
@@ -165,13 +191,13 @@ tokensense api --port 8080  # custom port
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| `GET` | `/v1/status` | Proxy status + today's request count |
+| `GET` | `/v1/status` | Proxy on/off + today's request count |
 | `GET` | `/v1/report?date=YYYY-MM-DD` | Full cost & savings report as JSON |
-| `POST` | `/v1/classify` | Classify a prompt → task type + model recommendations |
-| `GET` | `/v1/usage?limit=N&date=YYYY-MM-DD` | Raw usage records |
-| `GET` | `/v1/docs` | Full API reference |
+| `POST` | `/v1/classify` | Classify a prompt → task type + ranked model recommendations |
+| `GET` | `/v1/usage?limit=N&date=YYYY-MM-DD` | Raw usage records (newest first) |
+| `GET` | `/v1/docs` | Full API reference with examples |
 
-### Python Example (Agent Cost Guard)
+### Python — Agent Cost Guard
 
 ```python
 import requests
@@ -213,20 +239,22 @@ curl -s -X POST http://localhost:7891/v1/classify \
 const res = await fetch('http://localhost:7891/v1/report');
 const report = await res.json();
 console.log(`Spent today: $${report.total_cost_usd.toFixed(4)}`);
-console.log(`Could save: $${report.savings_potential_usd.toFixed(4)}`);
+console.log(`Could save:  $${report.savings_potential_usd.toFixed(4)}`);
 ```
+
+---
 
 ## Uninstalling
 
 Two steps: run the command, then delete the binary.
 
 ```bash
-# Step 1 — removes the service, CA certificate, proxy env vars, and all data in ~/.tokensense/
+# Step 1 — removes the service, CA certificate, proxy env vars, and ~/.tokensense/
 tokensense uninstall
 
 # Step 2 — delete the binary (the command can't remove itself while running)
-sudo rm /usr/local/bin/tokensense   # installed via curl / install.sh
-rm ~/go/bin/tokensense              # installed via go install
+sudo rm /usr/local/bin/tokensense   # if installed via curl / install.sh
+rm ~/go/bin/tokensense              # if installed via go install
 
 # Step 3 — restart your terminal
 ```
@@ -234,8 +262,10 @@ rm ~/go/bin/tokensense              # installed via go install
 **What `tokensense uninstall` removes:**
 - Background proxy service (launchd on macOS / systemd on Linux / Windows Service)
 - CA certificate from your OS trust store
-- `HTTPS_PROXY` / `HTTP_PROXY` lines from `~/.zshrc`, `~/.bashrc`, `~/.profile`
+- `HTTPS_PROXY`, `HTTP_PROXY`, and `NO_PROXY` lines from `~/.zshrc`, `~/.bashrc`, `~/.profile`
 - Everything in `~/.tokensense/` — database, config, logs, CA private key
+
+---
 
 ## Contributing
 
@@ -246,4 +276,4 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on:
 
 ## License
 
-MIT
+MIT — [Dibakshya Chakraborty](https://github.com/dibakshya)

@@ -29,8 +29,11 @@ brew install tokensense/tap/tokensense
 # Windows (PowerShell)
 irm https://raw.githubusercontent.com/dibakshya/tokensense/main/scripts/install.ps1 | iex
 
-# From source
+# Go install
 go install github.com/dibakshya/tokensense@latest
+# Then add Go's bin dir to PATH so the command is findable (one-time):
+echo 'export PATH="$PATH:$HOME/go/bin"' >> ~/.zshrc && source ~/.zshrc
+# (replace ~/.zshrc with ~/.bashrc if you use bash)
 ```
 
 ### Setup

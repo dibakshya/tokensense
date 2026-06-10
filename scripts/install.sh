@@ -18,6 +18,8 @@ if [ -z "$VERSION" ]; then
   echo ""
   echo "  ── Option 1: install with Go (recommended) ──────────────────"
   echo "     go install github.com/$REPO@latest"
+  echo "     echo 'export PATH=\"\$PATH:\$HOME/go/bin\"' >> ~/.zshrc && source ~/.zshrc"
+  echo "     tokensense setup"
   echo ""
   echo "  ── Option 2: build from source ──────────────────────────────"
   echo "     git clone https://github.com/$REPO.git"

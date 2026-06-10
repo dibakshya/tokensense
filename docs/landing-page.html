@@ -532,8 +532,13 @@ tokensense setup</pre>
         <h4 style="color:var(--muted);font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px">Go install</h4>
         <div class="code-block">
           <pre><span style="color:#7dd3fc">go</span> install github.com/dibakshya/tokensense@latest
+<span style="color:#4a566a"># Add Go's bin folder to PATH (once — makes tokensense findable)</span>
+<span style="color:#7dd3fc">echo</span> <span style="color:#86efac">'export PATH="$PATH:$HOME/go/bin"'</span> &gt;&gt; ~/.zshrc &amp;&amp; source ~/.zshrc
 tokensense setup</pre>
         </div>
+        <p style="color:var(--muted);font-size:12px;margin-top:8px">
+          If you use <strong style="color:var(--text)">bash</strong>, replace <code style="background:var(--code-bg);padding:1px 5px;border-radius:3px">~/.zshrc</code> with <code style="background:var(--code-bg);padding:1px 5px;border-radius:3px">~/.bashrc</code>
+        </p>
       </div>
     </div>
 

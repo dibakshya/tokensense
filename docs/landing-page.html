@@ -646,6 +646,21 @@ tokensense setup</pre>
       </div>
     </div>
 
+    <!-- ⚠️ Nothing tracked yet? — the single most common new-user confusion -->
+    <div style="margin-top:36px;padding:22px 26px;background:rgba(245,166,35,.07);border:1.5px solid rgba(245,166,35,.4);border-radius:10px;">
+      <div style="font-size:15px;font-weight:700;color:#f5a623;margin-bottom:10px;">⚠️  Not seeing anything tracked yet? Here's exactly why — and the fix.</div>
+      <p style="color:var(--muted);font-size:14px;margin-bottom:12px;">
+        Tokensense intercepts AI calls by acting as a local proxy. Setup adds <code style="background:var(--code-bg);padding:1px 5px;border-radius:3px">HTTPS_PROXY=http://127.0.0.1:7890</code> to your shell config.
+        But <strong style="color:var(--text)">apps that were already open when you ran setup don't know about it yet</strong> — they're still going directly to the AI API and bypassing the proxy entirely.
+      </p>
+      <p style="color:var(--text);font-size:13.5px;font-weight:700;margin-bottom:8px;">Do this right now — takes 30 seconds:</p>
+      <ol style="color:var(--text);font-size:14px;margin-left:20px;line-height:2.1;">
+        <li><strong>Open a new terminal tab</strong> — this loads the updated shell config with <code style="background:var(--code-bg);padding:1px 4px;border-radius:3px">HTTPS_PROXY</code> active.</li>
+        <li><strong>Quit and relaunch every AI tool you use</strong> — Cursor, Claude Desktop, VS Code, Windsurf, any app that calls AI APIs.</li>
+        <li>Make a prompt — it'll appear in the dashboard within a few seconds. ✓</li>
+      </ol>
+    </div>
+
     <div style="margin-top: 48px;">
       <div class="section-label" style="margin-bottom: 20px;">Commands</div>
       <div class="cmd-grid">

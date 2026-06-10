@@ -90,6 +90,23 @@ tokensense ask "..."      # get model recommendation for any task
 
 ---
 
+## ⚠️ Nothing being tracked yet?
+
+This is the most common thing people run into right after setup. Here's exactly why and what to do.
+
+**Why it happens:**
+Tokensense works by routing your AI tools through a local proxy at `127.0.0.1:7890`. Setup added `HTTPS_PROXY=http://127.0.0.1:7890` to your shell config (`~/.zshrc` / `~/.bashrc`) — but **apps that were already open when you ran setup don't know about this yet.** They're still talking directly to the AI API and bypassing the proxy entirely.
+
+**Fix it — takes 30 seconds:**
+
+1. **Open a new terminal tab** — this loads the updated shell config with `HTTPS_PROXY` active
+2. **Quit and relaunch every AI tool you use** — Cursor, Claude Desktop, VS Code with Copilot, Windsurf, any app that makes AI API calls
+3. Make a prompt — it will appear in the dashboard within a few seconds ✓
+
+> **Note:** You need to do step 2 every time you install a new AI tool. The app needs to be launched *after* `HTTPS_PROXY` is set in your shell for it to route through the proxy.
+
+---
+
 ## How It Works
 
 ```

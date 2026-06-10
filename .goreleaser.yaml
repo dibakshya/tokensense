@@ -1,3 +1,5 @@
+version: 2
+
 before:
   hooks:
     - go mod tidy
@@ -17,31 +19,19 @@ builds:
 
 archives:
   - format: tar.gz
+    wrap_in_directory: false
     format_overrides:
       - goos: windows
         format: zip
     name_template: "tokensense_{{ .Version }}_{{ .Os }}_{{ .Arch }}"
-
-brews:
-  - repository:
-      owner: tokensense
-      name: homebrew-tap
-    homepage: https://github.com/dibakshya/tokensense
-    description: "AI token usage optimizer — local proxy for model cost analysis"
-    license: MIT
-    install: |
-      bin.install "tokensense"
-
-nfpms:
-  - id: packages
-    package_name: tokensense
-    vendor: Tokensense
-    license: MIT
-    description: AI token usage optimizer
-    formats: [deb, rpm]
 
 checksum:
   name_template: checksums.txt
 
 changelog:
   sort: asc
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
+      - "^chore:"

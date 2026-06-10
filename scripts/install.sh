@@ -35,8 +35,14 @@ echo "  Downloading Tokensense v${VERSION} for ${OS}/${ARCH}..."
 TMPDIR=$(mktemp -d)
 curl -sfL "$URL" -o "$TMPDIR/tokensense.tar.gz"
 tar -xzf "$TMPDIR/tokensense.tar.gz" -C "$TMPDIR"
-chmod +x "$TMPDIR/tokensense"
-sudo mv "$TMPDIR/tokensense" /usr/local/bin/tokensense
+BINARY=$(find "$TMPDIR" -name "tokensense" -not -name "*.tar.gz" -type f | head -1)
+if [ -z "$BINARY" ]; then
+  echo "  ❌ Could not find tokensense binary in downloaded archive."
+  rm -rf "$TMPDIR"
+  exit 1
+fi
+chmod +x "$BINARY"
+sudo mv "$BINARY" /usr/local/bin/tokensense
 rm -rf "$TMPDIR"
 echo "  ✅ Tokensense v${VERSION} installed."
 echo ""

@@ -5,7 +5,7 @@
 ### macOS / Linux
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/tokensense/tokensense/main/scripts/install.sh | sh
+curl -fsSL https://github.fkinternal.com/dibakshya-c/tokensense/raw/main/scripts/install.sh | sh
 ```
 
 ### Homebrew (macOS / Linux)
@@ -17,13 +17,13 @@ brew install tokensense/tap/tokensense
 ### Windows (PowerShell)
 
 ```powershell
-irm https://raw.githubusercontent.com/tokensense/tokensense/main/scripts/install.ps1 | iex
+irm https://github.fkinternal.com/dibakshya-c/tokensense/raw/main/scripts/install.ps1 | iex
 ```
 
 ### From Source
 
 ```bash
-go install github.com/tokensense/tokensense@latest
+go install github.fkinternal.com/dibakshya-c/tokensense@latest
 ```
 
 ## First-Time Setup

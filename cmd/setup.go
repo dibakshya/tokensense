@@ -114,7 +114,9 @@ var setupCmd = &cobra.Command{
 
 		PrintSetupComplete(proxyStarted)
 
-		return nil
+		// Automatically open the browser dashboard — no extra command needed.
+		// New users land directly in the UI without having to know any commands.
+		return runDashboard(cmd, args)
 	},
 }
 

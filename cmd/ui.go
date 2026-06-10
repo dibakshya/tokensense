@@ -73,7 +73,6 @@ var devCmds = []cmdEntry{
 
 func PrintSetupComplete(proxyStarted bool) {
 	w := "  "
-	bar := "  " + strings.Repeat("─", 62)
 	box := "  " + strings.Repeat("═", 62)
 
 	fmt.Println()
@@ -82,19 +81,18 @@ func PrintSetupComplete(proxyStarted bool) {
 	fmt.Println(bold("  ╚" + strings.Repeat("═", 62) + "╝"))
 	fmt.Println()
 
-	// ── Next steps box — the most prominent thing on screen ──────────────
 	fmt.Println(bold(w + "YOUR NEXT STEPS:"))
 	fmt.Println(box)
 	fmt.Println()
 
 	if proxyStarted {
-		fmt.Println(green(w + "  ✅  Step 1 complete — proxy started automatically"))
+		fmt.Println(green(w + "  ✅  Step 1 — proxy started automatically"))
 		fmt.Println()
 		fmt.Println(bold(w + "  Step 2 →  Restart your terminal"))
-		fmt.Println(w + "           (activates HTTPS_PROXY for your AI tools)")
+		fmt.Println(w + "           activates HTTPS_PROXY for your AI tools")
 		fmt.Println()
-		fmt.Println(bold(w + "  Step 3 →  " + cyan("tokensense dashboard")))
-		fmt.Println(w + "           opens your browser control panel")
+		fmt.Println(green(w + "  ✅  Step 3 — browser dashboard opening now…"))
+		fmt.Println(w + "           It will appear in your browser in a moment.")
 	} else {
 		fmt.Println(bold(w + "  Step 1 →  " + cyan("tokensense start")))
 		fmt.Println(w + "           starts the tracking proxy")
@@ -102,25 +100,14 @@ func PrintSetupComplete(proxyStarted bool) {
 		fmt.Println(bold(w + "  Step 2 →  Restart your terminal"))
 		fmt.Println(w + "           activates HTTPS_PROXY for your AI tools")
 		fmt.Println()
-		fmt.Println(bold(w + "  Step 3 →  " + cyan("tokensense dashboard")))
-		fmt.Println(w + "           opens your browser control panel")
+		fmt.Println(green(w + "  ✅  Step 3 — browser dashboard opening now…"))
+		fmt.Println(w + "           It will appear in your browser in a moment.")
 	}
 
 	fmt.Println()
 	fmt.Println(box)
 	fmt.Println()
-	fmt.Println(w + dim("Prefer the terminal? Here's everything you can do:"))
-	fmt.Println()
-
-	printSection("🚀  GET STARTED", startCmds, bar)
-	printSection("📊  TRACK YOUR USAGE", trackCmds, bar)
-	printSection("⚙️   CONTROL THE PROXY", controlCmds, bar)
-	printSection("🔍  DIVE DEEPER", deepCmds, bar)
-	printSection("🔌  FOR DEVELOPERS & AI AGENTS", devCmds, bar)
-
-	fmt.Println(bar)
-	fmt.Println(w + dim("Docs & source: https://github.com/dibakshya/tokensense"))
-	fmt.Println(bar)
+	fmt.Println(w + dim("Prefer the terminal? Run: tokensense --help"))
 	fmt.Println()
 }
 

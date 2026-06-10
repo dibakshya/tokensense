@@ -24,7 +24,7 @@
       --font:      -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
       --mono:      "SF Mono", "JetBrains Mono", "Fira Code", "Cascadia Code", Consolas, monospace;
     }
-    html { scroll-behavior: smooth; }
+    html { scroll-behavior: auto; }
     body {
       background: var(--bg);
       color: var(--text);
@@ -237,30 +237,12 @@
     .cmd-row span { color: var(--muted); font-size: 14px; line-height: 1.5; }
 
     /* ── Install section ──────────────────────────────────────── */
-    .install-tabs { display: flex; gap: 4px; margin-bottom: 16px; }
-    .tab {
-      padding: 7px 16px; border-radius: 6px; font-size: 13px; font-weight: 600;
-      cursor: pointer; border: 1px solid transparent; color: var(--muted);
-      transition: all .2s; background: none;
-    }
-    .tab.active { background: var(--accent); color: #fff; border-color: transparent; }
-    .tab:hover:not(.active) { background: var(--surface2); border-color: var(--border); color: var(--text); }
     .code-block {
       background: var(--code-bg); border: 1px solid var(--border);
       border-radius: 8px; padding: 20px 24px; position: relative;
       font-family: var(--mono); font-size: 13.5px; line-height: 1.8;
       overflow-x: auto;
     }
-    .copy-btn {
-      position: absolute; top: 12px; right: 12px;
-      background: var(--surface2); border: 1px solid var(--border);
-      color: var(--muted); font-size: 12px; padding: 4px 10px; border-radius: 4px;
-      cursor: pointer; transition: all .2s; font-family: var(--font);
-    }
-    .copy-btn:hover { background: var(--border); color: var(--text); }
-    .tab-panel { display: none; }
-    .tab-panel.active { display: block; }
-
     /* ── Privacy section ──────────────────────────────────────── */
     .privacy-grid {
       display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -332,20 +314,15 @@
 <!-- ─────────────── NAV ─────────────── -->
 <nav>
   <div class="nav-inner">
-    <a href="#" onclick="return ts_scroll('top')" class="nav-logo" style="text-decoration:none">
+    <span class="nav-logo">
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
         <rect width="24" height="24" rx="6" fill="#4f8ef7"/>
         <path d="M7 12h10M7 8h10M7 16h6" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
       </svg>
       tokensense
-    </a>
+    </span>
     <div class="nav-links">
-      <a href="#" onclick="return ts_scroll('features')">Features</a>
-      <a href="#" onclick="return ts_scroll('how-it-works')">How It Works</a>
-      <a href="#" onclick="return ts_scroll('install')">Install</a>
-      <a href="#" onclick="return ts_scroll('developers')">Developers</a>
-      <a href="#" onclick="return ts_scroll('guide')">Guide</a>
-      <a href="https://github.com/dibakshya/tokensense" target="_blank" rel="noopener noreferrer">Docs</a>
+      <a href="https://github.com/dibakshya/tokensense/blob/main/README.md" target="_blank" rel="noopener noreferrer">Docs</a>
       <a href="https://github.com/dibakshya/tokensense" target="_blank" rel="noopener noreferrer" class="nav-cta">GitHub →</a>
     </div>
   </div>
@@ -362,9 +339,9 @@
       models could save you money — without touching your data.
     </p>
     <div class="hero-actions">
-      <a href="#" onclick="return ts_scroll('install')" class="btn btn-primary">
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1v10M4 8l4 4 4-4M2 13h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-        Get Started
+      <a href="https://github.com/dibakshya/tokensense" class="btn btn-primary" target="_blank" rel="noopener noreferrer">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+        Get Started on GitHub
       </a>
       <a href="https://github.com/dibakshya/tokensense" class="btn btn-secondary" target="_blank" rel="noopener noreferrer">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
@@ -527,41 +504,36 @@
     <h2>Up and running in under 2 minutes</h2>
     <p class="section-sub">One command to install, one command to set up.</p>
 
-    <div class="install-tabs">
-      <button class="tab active" onclick="switchTab(this,'macos')">macOS / Linux</button>
-      <button class="tab" onclick="switchTab(this,'brew')">Homebrew</button>
-      <button class="tab" onclick="switchTab(this,'windows')">Windows</button>
-      <button class="tab" onclick="switchTab(this,'go')">Go install</button>
-    </div>
-
-    <div id="tab-macos" class="tab-panel active">
-      <div class="code-block">
-        <button class="copy-btn" onclick="copyCode(this,'macos')">Copy</button>
-        <pre id="code-macos"><span style="color:#7dd3fc">curl</span> -fsSL https://raw.githubusercontent.com/dibakshya/tokensense/main/scripts/install.sh | sh
+    <div style="display:flex;flex-direction:column;gap:24px">
+      <div>
+        <h4 style="color:var(--muted);font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px">macOS / Linux</h4>
+        <div class="code-block">
+          <pre><span style="color:#7dd3fc">curl</span> -fsSL https://raw.githubusercontent.com/dibakshya/tokensense/main/scripts/install.sh | sh
 <span style="color:#4a566a"># Then run setup</span>
 tokensense setup</pre>
+        </div>
       </div>
-    </div>
-    <div id="tab-brew" class="tab-panel">
-      <div class="code-block">
-        <button class="copy-btn" onclick="copyCode(this,'brew')">Copy</button>
-        <pre id="code-brew"><span style="color:#7dd3fc">brew</span> install tokensense/tap/tokensense
+      <div>
+        <h4 style="color:var(--muted);font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px">Homebrew</h4>
+        <div class="code-block">
+          <pre><span style="color:#7dd3fc">brew</span> install tokensense/tap/tokensense
 tokensense setup</pre>
+        </div>
       </div>
-    </div>
-    <div id="tab-windows" class="tab-panel">
-      <div class="code-block">
-        <button class="copy-btn" onclick="copyCode(this,'windows')">Copy</button>
-        <pre id="code-windows"><span style="color:#4a566a"># Run in PowerShell as Administrator</span>
+      <div>
+        <h4 style="color:var(--muted);font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px">Windows (PowerShell)</h4>
+        <div class="code-block">
+          <pre><span style="color:#4a566a"># Run in PowerShell as Administrator</span>
 <span style="color:#7dd3fc">irm</span> https://raw.githubusercontent.com/dibakshya/tokensense/main/scripts/install.ps1 | iex
 tokensense setup</pre>
+        </div>
       </div>
-    </div>
-    <div id="tab-go" class="tab-panel">
-      <div class="code-block">
-        <button class="copy-btn" onclick="copyCode(this,'go')">Copy</button>
-        <pre id="code-go"><span style="color:#7dd3fc">go</span> install github.com/dibakshya/tokensense@latest
+      <div>
+        <h4 style="color:var(--muted);font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;margin-bottom:10px">Go install</h4>
+        <div class="code-block">
+          <pre><span style="color:#7dd3fc">go</span> install github.com/dibakshya/tokensense@latest
 tokensense setup</pre>
+        </div>
       </div>
     </div>
 
@@ -796,83 +768,5 @@ tokensense setup</pre>
   </div>
 </footer>
 
-<script>
-  // ── Scroll helper ────────────────────────────────────────────────────────
-  // Uses window.scrollTo (operates on the iframe's own window) instead of
-  // scrollIntoView (which can bubble up to the parent frame in Google Sites).
-  // href="#" + onclick="return ts_scroll('id')" prevents any navigation.
-  function ts_scroll(id) {
-    try {
-      if (id === 'top') {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      } else {
-        var el = document.getElementById(id);
-        if (el) {
-          var top = el.getBoundingClientRect().top + window.pageYOffset - 16;
-          window.scrollTo({ top: top, behavior: 'smooth' });
-        }
-      }
-    } catch (e) {
-      // Fallback for browsers that don't support smooth scroll options
-      if (id === 'top') {
-        window.scrollTo(0, 0);
-      } else {
-        var el2 = document.getElementById(id);
-        if (el2) window.scrollTo(0, el2.offsetTop - 16);
-      }
-    }
-    return false; // always prevent href="#" from firing
-  }
-
-  // ── Tab switching ────────────────────────────────────────────────────────
-  // Accepts explicit element reference — avoids window.event which is
-  // unreliable inside sandboxed iframes (e.g. Google Sites).
-  function switchTab(el, id) {
-    var tabs = document.querySelectorAll('.tab');
-    var panels = document.querySelectorAll('.tab-panel');
-    for (var i = 0; i < tabs.length; i++) tabs[i].classList.remove('active');
-    for (var j = 0; j < panels.length; j++) panels[j].classList.remove('active');
-    el.classList.add('active');
-    var panel = document.getElementById('tab-' + id);
-    if (panel) panel.classList.add('active');
-  }
-
-  // ── Copy code ────────────────────────────────────────────────────────────
-  // Accepts explicit element reference for the same reason.
-  // Falls back to execCommand('copy') when navigator.clipboard is unavailable
-  // (Google Sites iframes don't delegate the clipboard-write permission).
-  function copyCode(el, id) {
-    var codeEl = document.getElementById('code-' + id);
-    if (!codeEl) return;
-    var text = codeEl.textContent || codeEl.innerText;
-
-    function onCopied() {
-      el.textContent = 'Copied!';
-      setTimeout(function() { el.textContent = 'Copy'; }, 2000);
-    }
-
-    if (window.navigator && navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(text).then(onCopied).catch(function() {
-        fallbackCopy(text, onCopied);
-      });
-    } else {
-      fallbackCopy(text, onCopied);
-    }
-  }
-
-  function fallbackCopy(text, callback) {
-    var ta = document.createElement('textarea');
-    ta.value = text;
-    ta.style.cssText = 'position:fixed;top:-9999px;left:-9999px;opacity:0';
-    document.body.appendChild(ta);
-    ta.focus();
-    ta.select();
-    try {
-      document.execCommand('copy');
-      if (callback) callback();
-    } catch (e) { /* clipboard unavailable — silent fail */ }
-    document.body.removeChild(ta);
-  }
-</script>
 </body>
 </html>

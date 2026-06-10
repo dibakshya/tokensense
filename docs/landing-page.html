@@ -559,7 +559,22 @@ tokensense setup</pre>
         <div class="cmd-row"><code>tokensense export</code><span>Download your usage data as JSON or CSV</span></div>
         <div class="cmd-row"><code>tokensense merge a.json b.json</code><span>Combine usage exports from teammates into one team report</span></div>
         <div class="cmd-row"><code>tokensense config set key value</code><span>Change a setting (privacy_mode, report_time, etc.)</span></div>
-        <div class="cmd-row"><code>tokensense uninstall</code><span>Remove everything cleanly — cert, service, data, and shell config</span></div>
+        <div class="cmd-row"><code>tokensense uninstall</code><span>Removes the service, CA certificate, proxy settings, and all data — then delete the binary manually (see below)</span></div>
+      </div>
+    </div>
+
+    <div style="margin-top:24px;padding:18px 22px;background:var(--surface);border:1px solid var(--border);border-radius:8px;border-left:3px solid var(--amber)">
+      <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:8px">🗑️ Fully uninstalling Tokensense</div>
+      <p style="color:var(--muted);font-size:13px;margin-bottom:12px">Run <code style="background:var(--code-bg);padding:1px 5px;border-radius:3px">tokensense uninstall</code> first — it removes the service, CA certificate, proxy env vars, and all data in <code style="background:var(--code-bg);padding:1px 5px;border-radius:3px">~/.tokensense/</code>. Then delete the binary (the command can't remove itself while running):</p>
+      <div class="code-block" style="padding:14px 18px">
+        <pre style="font-size:12.5px"><span style="color:#4a566a"># Step 1 — run this first</span>
+tokensense uninstall
+
+<span style="color:#4a566a"># Step 2 — delete the binary</span>
+sudo rm /usr/local/bin/tokensense   <span style="color:#4a566a"># installed via curl / install.sh</span>
+rm ~/go/bin/tokensense              <span style="color:#4a566a"># installed via go install</span>
+
+<span style="color:#4a566a"># Step 3 — restart your terminal</span></pre>
       </div>
     </div>
 

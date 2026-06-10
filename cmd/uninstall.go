@@ -65,7 +65,19 @@ var uninstallCmd = &cobra.Command{
 		}
 		fmt.Println("done")
 
-		fmt.Println("\n✅ Tokensense uninstalled. Restart your terminal to clear proxy env vars.")
+		fmt.Println()
+		fmt.Println("  ✅ Tokensense data uninstalled.")
+		fmt.Println()
+		fmt.Println("  One last step — delete the binary (it can't remove itself while running):")
+		fmt.Println()
+		fmt.Println("    If installed via curl / install.sh:")
+		fmt.Println("      sudo rm /usr/local/bin/tokensense")
+		fmt.Println()
+		fmt.Println("    If installed via go install:")
+		fmt.Println("      rm ~/go/bin/tokensense")
+		fmt.Println()
+		fmt.Println("  Then restart your terminal to clear any remaining proxy env vars.")
+		fmt.Println()
 		return nil
 	},
 }

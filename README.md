@@ -197,6 +197,27 @@ console.log(`Spent today: $${report.total_cost_usd.toFixed(4)}`);
 console.log(`Could save: $${report.savings_potential_usd.toFixed(4)}`);
 ```
 
+## Uninstalling
+
+Two steps: run the command, then delete the binary.
+
+```bash
+# Step 1 — removes the service, CA certificate, proxy env vars, and all data in ~/.tokensense/
+tokensense uninstall
+
+# Step 2 — delete the binary (the command can't remove itself while running)
+sudo rm /usr/local/bin/tokensense   # installed via curl / install.sh
+rm ~/go/bin/tokensense              # installed via go install
+
+# Step 3 — restart your terminal
+```
+
+**What `tokensense uninstall` removes:**
+- Background proxy service (launchd on macOS / systemd on Linux / Windows Service)
+- CA certificate from your OS trust store
+- `HTTPS_PROXY` / `HTTP_PROXY` lines from `~/.zshrc`, `~/.bashrc`, `~/.profile`
+- Everything in `~/.tokensense/` — database, config, logs, CA private key
+
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on:

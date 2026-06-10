@@ -15,6 +15,25 @@
 - **Team reports** — export and merge usage data across team members
 - **100% local** — no server, no account, no cloud dependency, no telemetry
 
+## Browser Dashboard
+
+The easiest way to use Tokensense — no terminal commands needed after setup.
+
+```bash
+tokensense dashboard   # opens http://localhost:7892 in your browser
+tokensense             # same thing — dashboard is the default
+```
+
+The dashboard lets you:
+- **Start / stop** the proxy with one click (big green/red button)
+- **See today's cost breakdown** — live, refreshed every 6 seconds
+- **Spot savings** — highlighted recommendations per task type
+- **Change settings** — privacy mode, report time — no config files
+
+The CLI is still fully available for power users and scripting.
+
+---
+
 ## Quick Start (< 2 minutes)
 
 ### Install
@@ -96,10 +115,10 @@ Your AI Tool → Local HTTPS Proxy (127.0.0.1:7890) → AI API
 
 ## Commands
 
-| Command | Description |
-|---------|-------------|
 | Command | What it does (plain English) |
 |---------|------------------------------|
+| `tokensense` | Opens the browser dashboard — default when run with no arguments |
+| `tokensense dashboard` | Open the browser control panel (start/stop, reports, settings) |
 | `tokensense setup` | Run this once after install — sets everything up with a wizard |
 | `tokensense start` | Turn on tracking (also runs automatically at login) |
 | `tokensense stop` | Pause tracking temporarily |

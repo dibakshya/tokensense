@@ -451,6 +451,105 @@
   </div>
 </section>
 
+<!-- ─────────────── BROWSER DASHBOARD ─────────────── -->
+<section class="section" id="dashboard">
+  <div class="container">
+    <div class="section-label">Browser Dashboard</div>
+    <h2>No terminal? No problem.</h2>
+    <p class="section-sub">After setup, open the browser dashboard for full control with zero command-line knowledge needed.</p>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start">
+
+      <!-- Left: what it does -->
+      <div>
+        <div style="display:flex;flex-direction:column;gap:16px">
+          <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:20px 22px;display:flex;gap:16px;align-items:flex-start">
+            <div style="font-size:22px;flex-shrink:0">🔴</div>
+            <div>
+              <div style="font-weight:700;margin-bottom:4px">Start &amp; stop with one click</div>
+              <div style="color:var(--muted);font-size:13px">Big green button turns tracking on. Red button turns it off. No commands to remember.</div>
+            </div>
+          </div>
+          <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:20px 22px;display:flex;gap:16px;align-items:flex-start">
+            <div style="font-size:22px;flex-shrink:0">📊</div>
+            <div>
+              <div style="font-weight:700;margin-bottom:4px">Live cost breakdown</div>
+              <div style="color:var(--muted);font-size:13px">See today's spend, potential savings, and which tasks are costing the most — refreshed every 6 seconds.</div>
+            </div>
+          </div>
+          <div style="background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:20px 22px;display:flex;gap:16px;align-items:flex-start">
+            <div style="font-size:22px;flex-shrink:0">⚙️</div>
+            <div>
+              <div style="font-weight:700;margin-bottom:4px">Change settings visually</div>
+              <div style="color:var(--muted);font-size:13px">Switch privacy mode, set your report time — no config files to edit.</div>
+            </div>
+          </div>
+        </div>
+        <div style="margin-top:24px;padding:16px 20px;background:var(--code-bg);border:1px solid var(--border);border-radius:8px">
+          <div style="font-size:12px;color:var(--muted);margin-bottom:8px;text-transform:uppercase;letter-spacing:.8px;font-weight:700">Open the dashboard</div>
+          <code style="color:var(--accent);font-size:15px">tokensense dashboard</code>
+          <div style="color:var(--muted);font-size:12px;margin-top:6px">Or just run <code style="background:rgba(79,142,247,.08);padding:1px 5px;border-radius:3px">tokensense</code> with no arguments — dashboard is the default.</div>
+        </div>
+      </div>
+
+      <!-- Right: mock dashboard preview -->
+      <div style="background:var(--code-bg);border:1px solid var(--border);border-radius:12px;overflow:hidden;box-shadow:0 16px 48px rgba(0,0,0,.4)">
+        <!-- mock header -->
+        <div style="background:var(--surface);padding:12px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border)">
+          <div style="display:flex;align-items:center;gap:8px">
+            <div style="width:20px;height:20px;background:var(--accent);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;color:#fff">T</div>
+            <span style="font-size:13px;font-weight:700">tokensense</span>
+          </div>
+          <span style="font-size:11px;padding:3px 10px;border-radius:100px;background:rgba(48,217,122,.12);color:var(--green);border:1px solid rgba(48,217,122,.3);font-weight:700">● Live</span>
+        </div>
+        <!-- mock status hero -->
+        <div style="padding:24px;background:rgba(48,217,122,.04);border-bottom:1px solid rgba(48,217,122,.15);text-align:center">
+          <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Tracking Status</div>
+          <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:16px">
+            <div style="width:10px;height:10px;border-radius:50%;background:var(--green);box-shadow:0 0 8px rgba(48,217,122,.5)"></div>
+            <span style="font-size:20px;font-weight:800;color:var(--green)">Tracking is ON</span>
+          </div>
+          <div style="display:inline-block;background:rgba(245,100,80,.1);color:#f56450;border:1px solid rgba(245,100,80,.3);padding:9px 28px;border-radius:8px;font-size:13px;font-weight:700">■ Stop Tracking</div>
+        </div>
+        <!-- mock stats -->
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0;border-bottom:1px solid var(--border)">
+          <div style="padding:14px;text-align:center;border-right:1px solid var(--border)">
+            <div style="font-size:22px;font-weight:800">247</div>
+            <div style="font-size:11px;color:var(--muted)">AI calls today</div>
+          </div>
+          <div style="padding:14px;text-align:center;border-right:1px solid var(--border)">
+            <div style="font-size:22px;font-weight:800;color:var(--amber)">$4.87</div>
+            <div style="font-size:11px;color:var(--muted)">Spent today</div>
+          </div>
+          <div style="padding:14px;text-align:center">
+            <div style="font-size:22px;font-weight:800;color:var(--green)">$3.75</div>
+            <div style="font-size:11px;color:var(--muted)">Could save</div>
+          </div>
+        </div>
+        <!-- mock table -->
+        <div style="padding:14px 16px">
+          <div style="font-size:10px;color:var(--accent);text-transform:uppercase;letter-spacing:1px;font-weight:700;margin-bottom:10px">Today's Breakdown</div>
+          <div style="font-size:12px">
+            <div style="display:grid;grid-template-columns:1fr auto auto;gap:8px;padding:6px 0;border-bottom:1px solid rgba(42,48,64,.5);color:var(--muted)">
+              <span>Task type</span><span>Cost</span><span>Saves</span>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr auto auto;gap:8px;padding:7px 0;border-bottom:1px solid rgba(42,48,64,.3)">
+              <code style="font-size:11px;color:var(--text)">code_generation</code><span style="color:var(--amber)">$2.40</span><span style="color:var(--green)">💰 $1.90</span>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr auto auto;gap:8px;padding:7px 0;border-bottom:1px solid rgba(42,48,64,.3)">
+              <code style="font-size:11px;color:var(--text)">debugging</code><span style="color:var(--amber)">$1.20</span><span style="color:var(--green)">💰 $0.60</span>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr auto auto;gap:8px;padding:7px 0">
+              <code style="font-size:11px;color:var(--text)">test_generation</code><span style="color:var(--amber)">$0.28</span><span style="color:var(--muted)">✓ optimal</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
 <!-- ─────────────── HOW IT WORKS ─────────────── -->
 <section class="section" id="how-it-works">
   <div class="container">
@@ -545,6 +644,7 @@ tokensense setup</pre>
     <div style="margin-top: 48px;">
       <div class="section-label" style="margin-bottom: 20px;">Commands</div>
       <div class="cmd-grid">
+        <div class="cmd-row" style="border-color:rgba(79,142,247,.35);background:rgba(79,142,247,.05)"><code>tokensense dashboard</code><span>Open the browser control panel — the easiest way to use Tokensense (also the default when you run <code style="font-size:12px">tokensense</code> with no arguments)</span></div>
         <div class="cmd-row"><code>tokensense setup</code><span>Run once after install — sets everything up with a step-by-step wizard</span></div>
         <div class="cmd-row"><code>tokensense start</code><span>Turn on tracking (also runs automatically at login)</span></div>
         <div class="cmd-row"><code>tokensense stop</code><span>Pause tracking temporarily</span></div>

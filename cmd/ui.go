@@ -83,20 +83,24 @@ func PrintSetupComplete(proxyStarted bool) {
 		fmt.Println()
 		fmt.Println(bold(w + "  Step 2 →  Restart your terminal"))
 		fmt.Println(w + "           (activates HTTPS_PROXY for your AI tools)")
+		fmt.Println()
+		fmt.Println(bold(w + "  Step 3 →  " + cyan("tokensense dashboard")))
+		fmt.Println(w + "           opens your browser control panel")
 	} else {
 		fmt.Println(bold(w + "  Step 1 →  " + cyan("tokensense start")))
 		fmt.Println(w + "           starts the tracking proxy")
 		fmt.Println()
 		fmt.Println(bold(w + "  Step 2 →  Restart your terminal"))
 		fmt.Println(w + "           activates HTTPS_PROXY for your AI tools")
+		fmt.Println()
+		fmt.Println(bold(w + "  Step 3 →  " + cyan("tokensense dashboard")))
+		fmt.Println(w + "           opens your browser control panel")
 	}
 
 	fmt.Println()
 	fmt.Println(box)
 	fmt.Println()
-
-	// ── Command reference ─────────────────────────────────────────────────
-	fmt.Println(w + dim("Once the proxy is running, here's everything you can do:"))
+	fmt.Println(w + dim("Prefer the terminal? Here's everything you can do:"))
 	fmt.Println()
 
 	printSection("📊  TRACK YOUR USAGE", trackCmds, bar)
@@ -126,32 +130,33 @@ func PrintNextSteps(currentCmd string) {
 
 	switch currentCmd {
 	case "start":
+		printHint("🌐 Open browser dashboard", "tokensense dashboard")
 		printHint("📊 Check what's being tracked", "tokensense status")
 		printHint("📈 View your usage report", "tokensense report")
 	case "stop":
+		printHint("🌐 Open browser dashboard", "tokensense dashboard")
 		printHint("▶️  Resume tracking", "tokensense start")
-		printHint("📈 View your last report", "tokensense report")
 	case "status":
+		printHint("🌐 Open browser dashboard", "tokensense dashboard")
 		printHint("📈 See your cost breakdown", "tokensense report")
-		printHint("🌐 Open visual report", "tokensense report --html --open")
 		printHint("💬 Get model advice", `tokensense ask "describe your task"`)
 	case "report":
+		printHint("🌐 Open browser dashboard", "tokensense dashboard")
 		printHint("🌐 Open visual HTML report", "tokensense report --html --open")
 		printHint("💬 Get AI model advice", `tokensense ask "describe your task"`)
-		printHint("💾 Export raw data", "tokensense export")
 	case "ask":
+		printHint("🌐 Open browser dashboard", "tokensense dashboard")
 		printHint("📈 View full usage report", "tokensense report")
-		printHint("🌐 Open visual report", "tokensense report --html --open")
 	case "api":
 		printHint("📖 API docs", "http://localhost:7891/v1/docs")
 		printHint("📊 Live stats endpoint", "curl http://localhost:7891/v1/status")
 	case "export":
-		printHint("📈 View report", "tokensense report")
+		printHint("🌐 Open browser dashboard", "tokensense dashboard")
 		printHint("⚙️  Change settings", "tokensense config list")
 	default:
+		printHint("🌐 Open browser dashboard", "tokensense dashboard")
 		printHint("📊 Check proxy status", "tokensense status")
 		printHint("📈 View today's report", "tokensense report")
-		printHint("💬 Get model advice", `tokensense ask "describe your task"`)
 	}
 
 	fmt.Println(bar)

@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tokensense — Local AI Cost Tracker</title>
+  <style>
+    /* =====================================================================
+       RESET & BASE
+       ===================================================================== */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      font-size: 16px;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: #0d0f12;
+      color: #e4e8f0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                   "Helvetica Neue", Arial, sans-serif;
+      line-height: 1.5;
+      min-height: 100vh;
+    }
+
+    /* =====================================================================
+       STICKY HEADER
+       ===================================================================== */
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: #0d0f12;
+      border-bottom: 1px solid #2a3040;
+      padding: 0 24px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .header-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+
+    /* Blue square icon with "T" */
+    .logo-icon {
+      width: 32px;
+      height: 32px;
+      background: #4f8ef7;
+      border-radius: 7px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 17px;
+      color: #fff;
+      letter-spacing: -0.5px;
+      flex-shrink: 0;
+    }
+
+    .logo-wordmark {
+      font-size: 17px;
+      font-weight: 600;
+      color: #e4e8f0;
+      letter-spacing: -0.3px;
+    }
+
+    .header-spacer { flex: 1; }
+
+    /* Live / Stopped badge */
+    .live-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 999px;
+      transition: background 0.25s, color 0.25s, border-color 0.25s;
+    }
+
+    .live-badge.is-live {
+      background: rgba(48, 217, 122, 0.12);
+      color: #30d97a;
+      border: 1px solid rgba(48, 217, 122, 0.3);
+    }
+
+    .live-badge.is-stopped {
+      background: rgba(245, 100, 80, 0.10);
+      color: #f56450;
+      border: 1px solid rgba(245, 100, 80, 0.25);
+    }
+
+    .badge-dot {
+      font-size: 10px;
+      line-height: 1;
+    }
+
+    /* =====================================================================
+       PAGE LAYOUT
+       ===================================================================== */
+    .page {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 32px 24px 64px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* =====================================================================
+       CARD BASE
+       ===================================================================== */
+    .card {
+      background: #161a21;
+      border: 1px solid #2a3040;
+      border-radius: 14px;
+      padding: 24px;
+    }
+
+    /* =====================================================================
+       STATUS HERO CARD
+       ===================================================================== */
+    .hero-card {
+      border-radius: 16px;
+      padding: 32px 28px;
+      border: 1px solid transparent;
+      transition: background 0.35s, border-color 0.35s;
+    }
+
+    .hero-card.state-on {
+      background: linear-gradient(135deg,
+        rgba(48, 217, 122, 0.08) 0%,
+        rgba(22, 26, 33, 0.96) 60%);
+      border-color: rgba(48, 217, 122, 0.25);
+    }
+
+    .hero-card.state-off {
+      background: linear-gradient(135deg,
+        rgba(245, 100, 80, 0.07) 0%,
+        rgba(22, 26, 33, 0.96) 60%);
+      border-color: rgba(245, 100, 80, 0.2);
+    }
+
+    .hero-inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 20px;
+    }
+
+    /* Status indicator row */
+    .status-indicator {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .status-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .status-dot.on {
+      background: #30d97a;
+      box-shadow: 0 0 10px rgba(48, 217, 122, 0.6);
+    }
+
+    .status-dot.off {
+      background: #f56450;
+      box-shadow: 0 0 10px rgba(245, 100, 80, 0.5);
+    }
+
+    .status-text {
+      font-size: 26px;
+      font-weight: 700;
+      letter-spacing: -0.4px;
+    }
+
+    .status-text.on  { color: #30d97a; }
+    .status-text.off { color: #f56450; }
+
+    /* Hero action button */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 15px;
+      font-weight: 600;
+      padding: 12px 32px;
+      border-radius: 10px;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: opacity 0.2s, transform 0.1s, background 0.2s;
+      letter-spacing: 0.1px;
+    }
+
+    .btn:active { transform: scale(0.97); }
+    .btn:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
+
+    .btn-start {
+      background: #30d97a;
+      color: #0d0f12;
+      border-color: #30d97a;
+      font-size: 16px;
+      padding: 14px 40px;
+    }
+
+    .btn-start:hover:not(:disabled) {
+      background: #3fe888;
+      border-color: #3fe888;
+    }
+
+    .btn-stop {
+      background: transparent;
+      color: #f56450;
+      border-color: #f56450;
+      font-size: 16px;
+      padding: 14px 40px;
+    }
+
+    .btn-stop:hover:not(:disabled) {
+      background: rgba(245, 100, 80, 0.1);
+    }
+
+    /* Hero subtext */
+    .hero-sub {
+      font-size: 14px;
+      color: #7a8596;
+      line-height: 1.55;
+    }
+
+    /* Error message under button */
+    .hero-error {
+      font-size: 13px;
+      color: #f56450;
+      display: none;
+      margin-top: -8px;
+    }
+
+    /* =====================================================================
+       STATS ROW
+       ===================================================================== */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .stat-card {
+      background: #161a21;
+      border: 1px solid #2a3040;
+      border-radius: 14px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .stat-card.savings-tint {
+      border-color: rgba(48, 217, 122, 0.3);
+      background: linear-gradient(160deg,
+        rgba(48, 217, 122, 0.06) 0%,
+        #161a21 70%);
+    }
+
+    .stat-label {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #7a8596;
+      font-weight: 600;
+    }
+
+    .stat-value {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      color: #e4e8f0;
+      line-height: 1.1;
+    }
+
+    .stat-value.amber { color: #f5a623; }
+    .stat-value.green { color: #30d97a; }
+
+    /* =====================================================================
+       BREAKDOWN SECTION
+       ===================================================================== */
+    .section-title {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: #4f8ef7;
+      margin-bottom: 4px;
+    }
+
+    .section-rec {
+      font-size: 13px;
+      color: #7a8596;
+      margin-bottom: 18px;
+      line-height: 1.5;
+    }
+
+    /* Breakdown table */
+    .breakdown-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+
+    .breakdown-table thead th {
+      text-align: left;
+      padding: 8px 10px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: #7a8596;
+      border-bottom: 1px solid #2a3040;
+    }
+
+    .breakdown-table thead th:not(:first-child) {
+      text-align: right;
+    }
+
+    .breakdown-table tbody tr {
+      border-bottom: 1px solid rgba(42, 48, 64, 0.5);
+      transition: background 0.15s;
+    }
+
+    .breakdown-table tbody tr:last-child {
+      border-bottom: none;
+    }
+
+    .breakdown-table tbody tr:hover {
+      background: rgba(79, 142, 247, 0.04);
+    }
+
+    .breakdown-table tbody td {
+      padding: 12px 10px;
+      vertical-align: middle;
+    }
+
+    .breakdown-table tbody td:not(:first-child) {
+      text-align: right;
+    }
+
+    .td-task {
+      font-family: "SF Mono", "Fira Code", "Consolas", monospace;
+      font-size: 13px;
+      color: #e4e8f0;
+    }
+
+    .td-calls {
+      color: #7a8596;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .td-cost {
+      font-variant-numeric: tabular-nums;
+      color: #e4e8f0;
+    }
+
+    .td-model-optimal {
+      color: #7a8596;
+      font-size: 12px;
+    }
+
+    .td-model-better {
+      color: #4f8ef7;
+      font-size: 13px;
+    }
+
+    .td-saving-green {
+      color: #30d97a;
+      font-size: 13px;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+
+    .td-saving-optimal {
+      color: #7a8596;
+      font-size: 13px;
+    }
+
+    /* Empty state */
+    .empty-state {
+      padding: 40px 0 20px;
+      text-align: center;
+      color: #7a8596;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    /* =====================================================================
+       SETTINGS SECTION
+       ===================================================================== */
+    .settings-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      align-items: start;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #e4e8f0;
+    }
+
+    .form-hint {
+      font-size: 12px;
+      color: #7a8596;
+      line-height: 1.45;
+      margin-top: 2px;
+    }
+
+    .form-select,
+    .form-input {
+      background: #1e2330;
+      border: 1px solid #2a3040;
+      border-radius: 8px;
+      color: #e4e8f0;
+      font-size: 14px;
+      padding: 9px 12px;
+      width: 100%;
+      outline: none;
+      transition: border-color 0.2s;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+
+    .form-select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237a8596' stroke-width='1.8' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 32px;
+      cursor: pointer;
+    }
+
+    .form-select:focus,
+    .form-input:focus {
+      border-color: #4f8ef7;
+    }
+
+    .settings-footer {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-top: 22px;
+    }
+
+    .btn-save {
+      background: #4f8ef7;
+      color: #fff;
+      border-color: #4f8ef7;
+      padding: 10px 24px;
+      font-size: 14px;
+    }
+
+    .btn-save:hover:not(:disabled) {
+      background: #6ba3f9;
+      border-color: #6ba3f9;
+    }
+
+    .saved-flash {
+      font-size: 13px;
+      font-weight: 600;
+      color: #30d97a;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .saved-flash.visible { opacity: 1; }
+
+    /* =====================================================================
+       FOOTER
+       ===================================================================== */
+    .footer {
+      margin-top: 20px;
+      padding-top: 20px;
+      border-top: 1px solid #2a3040;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 16px;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      color: #7a8596;
+    }
+
+    .footer a {
+      color: #4f8ef7;
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+
+    .footer a:hover { color: #6ba3f9; }
+
+    .footer-sep {
+      color: #2a3040;
+    }
+
+    /* =====================================================================
+       UTILITY
+       ===================================================================== */
+    .mono {
+      font-family: "SF Mono", "Fira Code", "Consolas", monospace;
+    }
+
+    /* =====================================================================
+       RESPONSIVE — tablet / mobile
+       ===================================================================== */
+    @media (max-width: 640px) {
+      .page { padding: 20px 16px 48px; gap: 16px; }
+
+      .header { padding: 0 16px; }
+
+      .stats-row {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+
+      .settings-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-card { padding: 24px 18px; }
+
+      .status-text { font-size: 21px; }
+
+      .stat-value { font-size: 22px; }
+
+      .breakdown-table thead th:nth-child(4),
+      .breakdown-table tbody td:nth-child(4) {
+        display: none;
+      }
+    }
+
+    @media (max-width: 440px) {
+      .logo-wordmark { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ======================================================================
+     STICKY HEADER
+     ====================================================================== -->
+<header class="header">
+  <a class="header-logo" href="#">
+    <div class="logo-icon">T</div>
+    <span class="logo-wordmark">tokensense</span>
+  </a>
+  <div class="header-spacer"></div>
+  <span id="liveBadge" class="live-badge is-stopped">
+    <span class="badge-dot" id="badgeDot">○</span>
+    <span id="badgeText">Stopped</span>
+  </span>
+</header>
+
+<!-- ======================================================================
+     MAIN PAGE
+     ====================================================================== -->
+<main class="page">
+
+  <!-- ====================================================================
+       1. STATUS HERO CARD
+       ==================================================================== -->
+  <div id="heroCard" class="card hero-card state-off">
+    <div class="hero-inner">
+
+      <!-- Status indicator -->
+      <div class="status-indicator">
+        <div id="heroDot" class="status-dot off"></div>
+        <span id="heroText" class="status-text off">Tracking is OFF</span>
+      </div>
+
+      <!-- Action button -->
+      <button
+        id="toggleBtn"
+        class="btn btn-start"
+        onclick="toggleProxy()"
+      >&#9654;&nbsp;&nbsp;Start Tracking</button>
+
+      <!-- Subtext -->
+      <p id="heroSub" class="hero-sub">
+        AI calls are not being tracked. Click Start Tracking to begin.
+      </p>
+
+      <!-- Error area (hidden by default) -->
+      <p id="heroError" class="hero-error"></p>
+    </div>
+  </div>
+
+  <!-- ====================================================================
+       2. STATS ROW
+       ==================================================================== -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-label">AI Calls Today</div>
+      <div id="statCalls" class="stat-value">—</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Spent Today</div>
+      <div id="statCost" class="stat-value amber">—</div>
+    </div>
+    <div class="stat-card savings-tint">
+      <div class="stat-label">Potential Savings</div>
+      <div id="statSavings" class="stat-value green">—</div>
+    </div>
+  </div>
+
+  <!-- ====================================================================
+       3. TODAY'S BREAKDOWN
+       ==================================================================== -->
+  <div class="card">
+    <div class="section-title">Today's Breakdown</div>
+    <p id="topRec" class="section-rec">Loading recommendations…</p>
+
+    <div id="breakdownWrap">
+      <table class="breakdown-table">
+        <thead>
+          <tr>
+            <th>Task type</th>
+            <th>Calls</th>
+            <th>Spent</th>
+            <th>Better model</th>
+            <th>Potential saving</th>
+          </tr>
+        </thead>
+        <tbody id="breakdownBody">
+          <!-- rows injected by JS -->
+        </tbody>
+      </table>
+      <div id="breakdownEmpty" class="empty-state" style="display:none;">
+        No AI calls tracked yet today. Make sure tracking is ON and your AI tool is active.
+      </div>
+    </div>
+  </div>
+
+  <!-- ====================================================================
+       4. SETTINGS
+       ==================================================================== -->
+  <div class="card">
+    <div class="section-title">Settings</div>
+    <div class="settings-grid" style="margin-top: 16px;">
+
+      <!-- Privacy mode -->
+      <div class="form-group">
+        <label class="form-label" for="privacySelect">Privacy mode</label>
+        <select id="privacySelect" class="form-select">
+          <option value="content">Content classification (recommended)</option>
+          <option value="metadata">Metadata only — maximum privacy</option>
+        </select>
+        <p class="form-hint" id="privacyHint">
+          Content classification reads prompt text locally to suggest better models.
+          Metadata only tracks token counts and costs without reading prompt content.
+        </p>
+      </div>
+
+      <!-- Daily report time -->
+      <div class="form-group">
+        <label class="form-label" for="reportTime">Daily report time</label>
+        <input
+          type="time"
+          id="reportTime"
+          class="form-input"
+          value="18:00"
+        />
+        <p class="form-hint">
+          A summary report will be printed to your terminal at this local time each day.
+        </p>
+      </div>
+
+    </div>
+
+    <div class="settings-footer">
+      <button class="btn btn-save" onclick="saveSettings()">Save settings</button>
+      <span id="savedFlash" class="saved-flash">&#10003; Saved</span>
+    </div>
+  </div>
+
+  <!-- ====================================================================
+       FOOTER
+       ==================================================================== -->
+  <footer class="footer">
+    <span>All data is stored locally — nothing leaves your machine.</span>
+    <span class="footer-sep">·</span>
+    <a href="https://github.com/tokensense/tokensense" target="_blank" rel="noopener">GitHub</a>
+    <span class="footer-sep">·</span>
+    <a href="https://tokensense.dev/docs" target="_blank" rel="noopener">Docs</a>
+  </footer>
+
+</main>
+
+<!-- ======================================================================
+     JAVASCRIPT
+     ====================================================================== -->
+<script>
+  /*
+   * State
+   */
+  var _proxyRunning  = false;
+  var _proxyPort     = 0;
+  var _refreshTimer  = null;
+  var _savedTimer    = null;
+  var _pollTimer     = null;
+  var _pollCount     = 0;
+  var _MAX_POLLS     = 8;
+  var _POLL_INTERVAL = 600;   /* ms between proxy-state polls  */
+  var _REFRESH_MS    = 6000;  /* auto-refresh interval          */
+
+  /* ------------------------------------------------------------------
+     INIT — runs once on page load
+     ------------------------------------------------------------------ */
+  function init() {
+    fetchConfig();
+    refreshData();
+    _refreshTimer = setInterval(refreshData, _REFRESH_MS);
+  }
+
+  /* ------------------------------------------------------------------
+     REFRESH (status + report together)
+     ------------------------------------------------------------------ */
+  function refreshData() {
+    fetchStatus();
+    fetchReport();
+  }
+
+  /* ------------------------------------------------------------------
+     FETCH /api/status
+     ------------------------------------------------------------------ */
+  function fetchStatus() {
+    fetch('/api/status')
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        _proxyRunning = !!data.proxy_running;
+        _proxyPort    = data.proxy_port || 0;
+        updateHeroUI(data);
+        updateHeaderBadge(data.proxy_running);
+        updateStatCalls(data.requests_today, data.requests_total);
+      })
+      .catch(function(err) {
+        console.warn('[tokensense] /api/status error:', err);
+      });
+  }
+
+  /* ------------------------------------------------------------------
+     FETCH /api/report
+     ------------------------------------------------------------------ */
+  function fetchReport() {
+    fetch('/api/report')
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        updateStatCost(data.total_cost_usd);
+        updateStatSavings(data.savings_potential_usd);
+        updateTopRec(data.top_recommendation);
+        updateBreakdownTable(data.task_breakdown);
+      })
+      .catch(function(err) {
+        console.warn('[tokensense] /api/report error:', err);
+      });
+  }
+
+  /* ------------------------------------------------------------------
+     FETCH /api/config  (called once on load only)
+     ------------------------------------------------------------------ */
+  function fetchConfig() {
+    fetch('/api/config')
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.privacy_mode) {
+          document.getElementById('privacySelect').value = data.privacy_mode;
+          updatePrivacyHint(data.privacy_mode);
+        }
+        if (data.report_time) {
+          document.getElementById('reportTime').value = data.report_time;
+        }
+      })
+      .catch(function(err) {
+        console.warn('[tokensense] /api/config error:', err);
+      });
+  }
+
+  /* ------------------------------------------------------------------
+     TOGGLE PROXY  (start / stop)
+     ------------------------------------------------------------------ */
+  function toggleProxy() {
+    var btn        = document.getElementById('toggleBtn');
+    var errEl      = document.getElementById('heroError');
+    var starting   = !_proxyRunning;
+    var endpoint   = starting ? '/api/start' : '/api/stop';
+    var loadingTxt = starting
+      ? '&#9654;&nbsp;&nbsp;Starting&#8230;'
+      : '&#9632;&nbsp;&nbsp;Stopping&#8230;';
+
+    /* Disable button and show loading state */
+    btn.disabled   = true;
+    btn.innerHTML  = loadingTxt;
+    errEl.style.display = 'none';
+    errEl.textContent   = '';
+
+    fetch(endpoint, { method: 'POST' })
+      .then(function(r) {
+        if (!r.ok) {
+          return r.text().then(function(msg) {
+            throw new Error(msg || ('HTTP ' + r.status));
+          });
+        }
+        /* Start polling until state flips */
+        _pollCount = 0;
+        clearInterval(_pollTimer);
+        _pollTimer = setInterval(function() {
+          _pollCount++;
+          fetch('/api/status')
+            .then(function(r2) { return r2.json(); })
+            .then(function(data) {
+              /* Check if state changed to desired value */
+              if (!!data.proxy_running === starting || _pollCount >= _MAX_POLLS) {
+                clearInterval(_pollTimer);
+                _proxyRunning = !!data.proxy_running;
+                _proxyPort    = data.proxy_port || 0;
+                updateHeroUI(data);
+                updateHeaderBadge(data.proxy_running);
+                updateStatCalls(data.requests_today, data.requests_total);
+                btn.disabled = false;
+              }
+            })
+            .catch(function() {
+              if (_pollCount >= _MAX_POLLS) {
+                clearInterval(_pollTimer);
+                btn.disabled = false;
+                showHeroError('Could not confirm proxy state. Check terminal output.');
+              }
+            });
+        }, _POLL_INTERVAL);
+      })
+      .catch(function(err) {
+        btn.disabled = false;
+        showHeroError('Error: ' + (err.message || 'Unknown error'));
+        /* Restore button label to pre-attempt state */
+        applyHeroBtnLabel(_proxyRunning);
+      });
+  }
+
+  /* ------------------------------------------------------------------
+     SAVE SETTINGS
+     ------------------------------------------------------------------ */
+  function saveSettings() {
+    var saveBtn     = document.querySelector('.btn-save');
+    var privacyMode = document.getElementById('privacySelect').value;
+    var reportTime  = document.getElementById('reportTime').value;
+
+    saveBtn.disabled = true;
+
+    fetch('/api/config', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        privacy_mode: privacyMode,
+        report_time:  reportTime
+      })
+    })
+    .then(function(r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      flashSaved();
+      updatePrivacyHint(privacyMode);
+    })
+    .catch(function(err) {
+      alert('Failed to save settings: ' + (err.message || 'Unknown error'));
+    })
+    .finally(function() {
+      saveBtn.disabled = false;
+    });
+  }
+
+  /* ------------------------------------------------------------------
+     UI UPDATE HELPERS
+     ------------------------------------------------------------------ */
+
+  function updateHeroUI(data) {
+    var on        = !!data.proxy_running;
+    var heroCard  = document.getElementById('heroCard');
+    var heroDot   = document.getElementById('heroDot');
+    var heroText  = document.getElementById('heroText');
+    var heroSub   = document.getElementById('heroSub');
+    var toggleBtn = document.getElementById('toggleBtn');
+
+    /* Card tint */
+    heroCard.className = 'card hero-card ' + (on ? 'state-on' : 'state-off');
+
+    /* Dot */
+    heroDot.className = 'status-dot ' + (on ? 'on' : 'off');
+
+    /* Text */
+    heroText.className = 'status-text ' + (on ? 'on' : 'off');
+    heroText.textContent = on ? 'Tracking is ON' : 'Tracking is OFF';
+
+    /* Subtext */
+    if (on) {
+      var port   = data.proxy_port   || '—';
+      var today  = data.requests_today !== undefined ? data.requests_today : '—';
+      heroSub.innerHTML =
+        'Intercepting AI calls on <span class="mono">127.0.0.1:' + port + '</span>' +
+        ' &middot; ' + today + ' call' + (today === 1 ? '' : 's') + ' today';
+    } else {
+      heroSub.textContent =
+        'AI calls are not being tracked. Click Start Tracking to begin.';
+    }
+
+    /* Button (only if not currently in loading/disabled state from toggleProxy) */
+    if (!toggleBtn.disabled) {
+      applyHeroBtnLabel(on);
+    }
+  }
+
+  function applyHeroBtnLabel(on) {
+    var toggleBtn = document.getElementById('toggleBtn');
+    if (on) {
+      toggleBtn.className = 'btn btn-stop';
+      toggleBtn.innerHTML = '&#9632;&nbsp;&nbsp;Stop Tracking';
+    } else {
+      toggleBtn.className = 'btn btn-start';
+      toggleBtn.innerHTML = '&#9654;&nbsp;&nbsp;Start Tracking';
+    }
+  }
+
+  function updateHeaderBadge(on) {
+    var badge    = document.getElementById('liveBadge');
+    var dot      = document.getElementById('badgeDot');
+    var text     = document.getElementById('badgeText');
+    badge.className = 'live-badge ' + (on ? 'is-live' : 'is-stopped');
+    dot.textContent = on ? '●' : '○';
+    text.textContent = on ? 'Live' : 'Stopped';
+  }
+
+  function updateStatCalls(today) {
+    var el = document.getElementById('statCalls');
+    el.textContent = (today !== undefined && today !== null) ? today : '—';
+  }
+
+  function updateStatCost(cost) {
+    var el = document.getElementById('statCost');
+    if (cost !== undefined && cost !== null) {
+      el.textContent = '$' + cost.toFixed(4);
+    } else {
+      el.textContent = '—';
+    }
+  }
+
+  function updateStatSavings(savings) {
+    var el = document.getElementById('statSavings');
+    if (savings !== undefined && savings !== null) {
+      el.textContent = '$' + savings.toFixed(4);
+    } else {
+      el.textContent = '—';
+    }
+  }
+
+  function updateTopRec(rec) {
+    var el = document.getElementById('topRec');
+    el.textContent = rec || 'No recommendations yet — make some AI calls first.';
+  }
+
+  function updateBreakdownTable(rows) {
+    var tbody = document.getElementById('breakdownBody');
+    var empty = document.getElementById('breakdownEmpty');
+    var table = tbody.closest('table');
+
+    tbody.innerHTML = '';
+
+    if (!rows || rows.length === 0) {
+      table.style.display = 'none';
+      empty.style.display = 'block';
+      return;
+    }
+
+    table.style.display = '';
+    empty.style.display = 'none';
+
+    for (var i = 0; i < rows.length; i++) {
+      var row = rows[i];
+      var hasSaving = row.saving_usd && row.saving_usd > 0;
+
+      var tr = document.createElement('tr');
+
+      /* Task type */
+      tr.innerHTML =
+        '<td class="td-task">' + escHtml(row.task_type || '—') + '</td>' +
+        '<td class="td-calls">' + (row.count !== undefined ? row.count : '—') + '</td>' +
+        '<td class="td-cost">$' + (row.cost_usd !== undefined ? row.cost_usd.toFixed(4) : '—') + '</td>' +
+        '<td class="' + (hasSaving ? 'td-model-better' : 'td-model-optimal') + '">' +
+          escHtml(row.optimized_model || (hasSaving ? '—' : 'current')) + '</td>' +
+        '<td class="' + (hasSaving ? 'td-saving-green' : 'td-saving-optimal') + '">' +
+          (hasSaving
+            ? '&#x1F4B0; save $' + row.saving_usd.toFixed(4)
+            : '&#10003; optimal') +
+        '</td>';
+
+      tbody.appendChild(tr);
+    }
+  }
+
+  function updatePrivacyHint(mode) {
+    var hint = document.getElementById('privacyHint');
+    if (mode === 'metadata') {
+      hint.textContent =
+        'Metadata only: tracks token counts, costs, and latency — ' +
+        'prompt content is never read or stored.';
+    } else {
+      hint.textContent =
+        'Content classification reads prompt text locally to suggest ' +
+        'better-suited (cheaper) models. Nothing leaves your machine.';
+    }
+  }
+
+  function showHeroError(msg) {
+    var errEl = document.getElementById('heroError');
+    errEl.textContent = msg;
+    errEl.style.display = 'block';
+  }
+
+  function flashSaved() {
+    var el = document.getElementById('savedFlash');
+    if (_savedTimer) clearTimeout(_savedTimer);
+    el.classList.add('visible');
+    _savedTimer = setTimeout(function() {
+      el.classList.remove('visible');
+    }, 2500);
+  }
+
+  /* HTML escape helper — prevents XSS from API-returned strings */
+  function escHtml(str) {
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  /* Update privacy hint whenever select changes */
+  document.getElementById('privacySelect').onchange = function() {
+    updatePrivacyHint(this.value);
+  };
+
+  /* Kick everything off */
+  init();
+</script>
+</body>
+</html>

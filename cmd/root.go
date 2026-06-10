@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
+	"github.com/dibakshya/tokensense/internal/config"
 )
 
 var (
@@ -28,15 +29,35 @@ by task type, and generates reports showing where cheaper models could be used.
 
 Everything runs locally. No server. No account. No cloud dependency.`,
 
+	// Running 'tokensense' with no subcommand opens the browser dashboard.
+	RunE: func(cmd *cobra.Command, args []string) error {
+		if err := config.LoadConfig(); err != nil {
+			// Setup hasn't been run yet — guide the user.
+			fmt.Println()
+			fmt.Println(bold("  Welcome to Tokensense!"))
+			fmt.Println()
+			fmt.Println("  Looks like you haven't run setup yet. Start here:")
+			fmt.Println()
+			fmt.Printf("    %s\n", cyan("tokensense setup"))
+			fmt.Println()
+			fmt.Println("  The setup wizard takes about 2 minutes and walks you")
+			fmt.Println("  through everything — no technical knowledge needed.")
+			fmt.Println()
+			return nil
+		}
+		return runDashboard(cmd, args)
+	},
+
 	// Show "what's next?" after every command that succeeds
 	PersistentPostRun: func(cmd *cobra.Command, args []string) {
 		// These commands manage their own output / are long-running
 		skip := map[string]bool{
-			"setup":   true, // prints the full welcome banner instead
-			"start":   true, // long-running foreground process
-			"api":     true, // long-running server
-			"version": true,
-			"help":    true,
+			"setup":     true, // opens the dashboard instead
+			"start":     true, // long-running foreground process
+			"api":       true, // long-running server
+			"dashboard": true, // long-running server
+			"version":   true,
+			"help":      true,
 		}
 		if skip[cmd.Name()] {
 			return

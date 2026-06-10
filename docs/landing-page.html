@@ -568,16 +568,21 @@ tokensense setup</pre>
     <div style="margin-top: 48px;">
       <div class="section-label" style="margin-bottom: 20px;">Commands</div>
       <div class="cmd-grid">
-        <div class="cmd-row"><code>tokensense setup</code><span>Interactive setup wizard — cert, proxy, daemon, shell integration</span></div>
-        <div class="cmd-row"><code>tokensense status</code><span>Show proxy status, today's request count, and model matrix version</span></div>
-        <div class="cmd-row"><code>tokensense report</code><span>View today's cost breakdown and savings recommendations in terminal</span></div>
-        <div class="cmd-row"><code>tokensense report --html --open</code><span>Generate and open full HTML report with charts in browser</span></div>
-        <div class="cmd-row"><code>tokensense ask "..."</code><span>Get ranked model recommendations for any task description</span></div>
-        <div class="cmd-row"><code>tokensense tools status</code><span>Detect installed AI tools and their proxy compatibility</span></div>
-        <div class="cmd-row"><code>tokensense export</code><span>Export 30-day anonymized usage data as JSON for team sharing</span></div>
-        <div class="cmd-row"><code>tokensense merge a.json b.json</code><span>Merge multiple team exports into a combined HTML report</span></div>
-        <div class="cmd-row"><code>tokensense config set key value</code><span>Set a configuration value (privacy_mode, report_time, etc.)</span></div>
-        <div class="cmd-row"><code>tokensense uninstall</code><span>Complete removal — cert, service, profiles, and data</span></div>
+        <div class="cmd-row"><code>tokensense setup</code><span>Run once after install — sets everything up with a step-by-step wizard</span></div>
+        <div class="cmd-row"><code>tokensense start</code><span>Turn on tracking (also runs automatically at login)</span></div>
+        <div class="cmd-row"><code>tokensense stop</code><span>Pause tracking temporarily</span></div>
+        <div class="cmd-row"><code>tokensense status</code><span>See if the proxy is on and how many AI calls happened today</span></div>
+        <div class="cmd-row"><code>tokensense status --json</code><span>Same, but as machine-readable JSON — for scripts and agents</span></div>
+        <div class="cmd-row"><code>tokensense report</code><span>View today's cost breakdown and where you could save money</span></div>
+        <div class="cmd-row"><code>tokensense report --html --open</code><span>Open a visual chart-based report in your browser</span></div>
+        <div class="cmd-row"><code>tokensense report --json</code><span>Machine-readable JSON report — for agents, dashboards, and scripts</span></div>
+        <div class="cmd-row"><code>tokensense ask "describe your task"</code><span>Get model recommendations for anything you're trying to do</span></div>
+        <div class="cmd-row"><code>tokensense api</code><span>Start a local JSON API on localhost:7891 — for developers and AI agents</span></div>
+        <div class="cmd-row"><code>tokensense tools status</code><span>See which AI tools (Cursor, Claude, Copilot…) are being tracked</span></div>
+        <div class="cmd-row"><code>tokensense export</code><span>Download your usage data as JSON or CSV</span></div>
+        <div class="cmd-row"><code>tokensense merge a.json b.json</code><span>Combine usage exports from teammates into one team report</span></div>
+        <div class="cmd-row"><code>tokensense config set key value</code><span>Change a setting (privacy_mode, report_time, etc.)</span></div>
+        <div class="cmd-row"><code>tokensense uninstall</code><span>Remove everything cleanly — cert, service, data, and shell config</span></div>
       </div>
     </div>
 

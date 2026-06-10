@@ -73,12 +73,19 @@ var devCmds = []cmdEntry{
 
 func PrintSetupComplete(proxyStarted bool) {
 	w := "  "
-	box := "  " + strings.Repeat("═", 62)
+	box  := "  " + strings.Repeat("═", 62)
+	warn := bold(yellow("  ⚠️   RESTART YOUR TERMINAL BEFORE USING YOUR AI TOOLS"))
+	sub  := "      " + yellow("This activates HTTPS_PROXY — without it nothing is tracked.")
 
 	fmt.Println()
 	fmt.Println(bold("  ╔" + strings.Repeat("═", 62) + "╗"))
 	fmt.Println(bold("  ║") + green("  ✅  Tokensense setup complete!") + strings.Repeat(" ", 32) + bold("║"))
 	fmt.Println(bold("  ╚" + strings.Repeat("═", 62) + "╝"))
+	fmt.Println()
+
+	// ── Top reminder — seen immediately ──────────────────────────────────
+	fmt.Println(warn)
+	fmt.Println(sub)
 	fmt.Println()
 
 	fmt.Println(bold(w + "YOUR NEXT STEPS:"))
@@ -88,24 +95,31 @@ func PrintSetupComplete(proxyStarted bool) {
 	if proxyStarted {
 		fmt.Println(green(w + "  ✅  Step 1 — proxy started automatically"))
 		fmt.Println()
-		fmt.Println(bold(w + "  Step 2 →  Restart your terminal"))
-		fmt.Println(w + "           activates HTTPS_PROXY for your AI tools")
+		fmt.Println(bold(w + "  Step 2 →  ") + bold(yellow("Restart your terminal")))
+		fmt.Println(w + "           Activates HTTPS_PROXY so your AI tools route through")
+		fmt.Println(w + "           the proxy. Nothing will be tracked until you do this.")
 		fmt.Println()
-		fmt.Println(green(w + "  ✅  Step 3 — browser dashboard opening now…"))
+		fmt.Println(green(w + "  ✅  Step 3 — browser dashboard is opening now…"))
 		fmt.Println(w + "           It will appear in your browser in a moment.")
 	} else {
 		fmt.Println(bold(w + "  Step 1 →  " + cyan("tokensense start")))
 		fmt.Println(w + "           starts the tracking proxy")
 		fmt.Println()
-		fmt.Println(bold(w + "  Step 2 →  Restart your terminal"))
-		fmt.Println(w + "           activates HTTPS_PROXY for your AI tools")
+		fmt.Println(bold(w + "  Step 2 →  ") + bold(yellow("Restart your terminal")))
+		fmt.Println(w + "           Activates HTTPS_PROXY so your AI tools route through")
+		fmt.Println(w + "           the proxy. Nothing will be tracked until you do this.")
 		fmt.Println()
-		fmt.Println(green(w + "  ✅  Step 3 — browser dashboard opening now…"))
+		fmt.Println(green(w + "  ✅  Step 3 — browser dashboard is opening now…"))
 		fmt.Println(w + "           It will appear in your browser in a moment.")
 	}
 
 	fmt.Println()
 	fmt.Println(box)
+	fmt.Println()
+
+	// ── Bottom reminder — seen after scrolling / reading the steps ───────
+	fmt.Println(warn)
+	fmt.Println(sub)
 	fmt.Println()
 	fmt.Println(w + dim("Prefer the terminal? Run: tokensense --help"))
 	fmt.Println()

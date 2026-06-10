@@ -57,18 +57,46 @@ var devCmds = []cmdEntry{
 	{"tokensense status --json", "Get proxy status as machine-readable JSON"},
 }
 
-// ── Welcome banner (shown once after setup) ─────────────────────────────────
+// ── Setup complete (shown once after tokensense setup) ───────────────────────
+//
+// proxyStarted = true  → daemon launched successfully by the wizard
+// proxyStarted = false → daemon failed; user must run tokensense start
 
-func PrintWelcomeBanner() {
+func PrintSetupComplete(proxyStarted bool) {
 	w := "  "
 	bar := "  " + strings.Repeat("─", 62)
+	box := "  " + strings.Repeat("═", 62)
+
 	fmt.Println()
-	fmt.Println(bold("  ╔══════════════════════════════════════════════════════════════╗"))
-	fmt.Println(bold("  ║") + green("  🎉  Tokensense is set up and running!                      ") + bold("║"))
-	fmt.Println(bold("  ╚══════════════════════════════════════════════════════════════╝"))
+	fmt.Println(bold("  ╔" + strings.Repeat("═", 62) + "╗"))
+	fmt.Println(bold("  ║") + green("  ✅  Tokensense setup complete!") + strings.Repeat(" ", 32) + bold("║"))
+	fmt.Println(bold("  ╚" + strings.Repeat("═", 62) + "╝"))
 	fmt.Println()
-	fmt.Println(w + dim("Your AI spending is now tracked silently in the background."))
-	fmt.Println(w + dim("Here is everything you can do — no technical knowledge needed."))
+
+	// ── Next steps box — the most prominent thing on screen ──────────────
+	fmt.Println(bold(w + "YOUR NEXT STEPS:"))
+	fmt.Println(box)
+	fmt.Println()
+
+	if proxyStarted {
+		fmt.Println(green(w + "  ✅  Step 1 complete — proxy started automatically"))
+		fmt.Println()
+		fmt.Println(bold(w + "  Step 2 →  Restart your terminal"))
+		fmt.Println(w + "           (activates HTTPS_PROXY for your AI tools)")
+	} else {
+		fmt.Println(bold(w + "  Step 1 →  " + cyan("tokensense start")))
+		fmt.Println(w + "           starts the tracking proxy")
+		fmt.Println()
+		fmt.Println(bold(w + "  Step 2 →  Restart your terminal"))
+		fmt.Println(w + "           activates HTTPS_PROXY for your AI tools")
+	}
+
+	fmt.Println()
+	fmt.Println(box)
+	fmt.Println()
+
+	// ── Command reference ─────────────────────────────────────────────────
+	fmt.Println(w + dim("Once the proxy is running, here's everything you can do:"))
 	fmt.Println()
 
 	printSection("📊  TRACK YOUR USAGE", trackCmds, bar)
@@ -77,11 +105,13 @@ func PrintWelcomeBanner() {
 	printSection("🔌  FOR DEVELOPERS & AI AGENTS", devCmds, bar)
 
 	fmt.Println(bar)
-	fmt.Println(w + bold("Quick start:") + "  " + cyan("tokensense status") + "  →  " + cyan("tokensense report"))
 	fmt.Println(w + dim("Docs & source: https://github.com/dibakshya/tokensense"))
 	fmt.Println(bar)
 	fmt.Println()
 }
+
+// PrintWelcomeBanner is kept for any callers outside setup.
+func PrintWelcomeBanner() { PrintSetupComplete(true) }
 
 // ── Next-steps panel (shown after each command) ──────────────────────────────
 

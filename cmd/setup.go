@@ -105,19 +105,14 @@ var setupCmd = &cobra.Command{
 		if err := svc.Install(binaryPath); err != nil {
 			fmt.Printf("Warning: cannot register service: %v\n", err)
 		}
-		if err := svc.Start(); err != nil {
-			fmt.Printf("Warning: cannot start service: %v\n", err)
-			fmt.Println("Start manually with: tokensense start")
-		}
+		proxyStarted := svc.Start() == nil
 
 		// Save the token optimization guide to the desktop on first run
 		if len(BundledGuide) > 0 {
 			saveGuideToDesktop()
 		}
 
-		PrintWelcomeBanner()
-		fmt.Println("  ⚡  Restart your terminal (or open a new tab) to activate the proxy.")
-		fmt.Println()
+		PrintSetupComplete(proxyStarted)
 
 		return nil
 	},

@@ -4,8 +4,10 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"net"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 
 	"github.com/spf13/cobra"
@@ -72,6 +74,29 @@ var startCmd = &cobra.Command{
 		port := config.GetInt("proxy_port")
 		addr := fmt.Sprintf("%s:%d", host, port)
 		contentMode := config.GetString("privacy_mode") == "content"
+
+		// ── Check port availability before printing anything ──────────────────
+		// This prevents the "proxy is running" banner appearing right before
+		// an "address already in use" crash.
+		if ln, err := net.Listen("tcp", addr); err != nil {
+			if strings.Contains(err.Error(), "address already in use") {
+				fmt.Println()
+				fmt.Println(yellow("  ⚠️  Port " + addr + " is already in use."))
+				fmt.Println()
+				fmt.Println("  Tokensense is probably already running. To fix:")
+				fmt.Println()
+				fmt.Printf("    %s\n", cyan("tokensense stop"))
+				fmt.Printf("    %s\n", cyan("tokensense start"))
+				fmt.Println()
+				fmt.Println("  To see what is on that port:")
+				fmt.Printf("    %s\n", cyan(fmt.Sprintf("lsof -i :%d", port)))
+				fmt.Println()
+				return fmt.Errorf("port %s is already in use — run: tokensense stop", addr)
+			}
+			return fmt.Errorf("cannot listen on %s: %w", addr, err)
+		} else {
+			ln.Close() // release — proxy will re-bind immediately below
+		}
 
 		logger := log.New(os.Stderr, "[tokensense] ", log.LstdFlags)
 

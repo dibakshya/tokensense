@@ -1,7 +1,7 @@
 package advisor
 
 import (
-	"github.fkinternal.com/dibakshya-c/tokensense/internal/classifier"
+	"github.com/dibakshya/tokensense/internal/classifier"
 )
 
 // ModelRecommendation is a ranked model recommendation for display.

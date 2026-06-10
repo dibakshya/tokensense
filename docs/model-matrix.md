@@ -12,7 +12,7 @@ The model matrix is a versioned YAML file that contains pricing, quality scores,
 By default, Tokensense fetches the latest matrix daily from:
 
 ```
-https://github.fkinternal.com/dibakshya-c/tokensense/raw/main/data/model-matrix.yaml
+https://raw.githubusercontent.com/dibakshya/tokensense/main/data/model-matrix.yaml
 ```
 
 Disable with:

@@ -7,7 +7,7 @@ import (
 	"sort"
 
 	"github.com/spf13/cobra"
-	"github.fkinternal.com/dibakshya-c/tokensense/internal/reporter"
+	"github.com/dibakshya/tokensense/internal/reporter"
 )
 
 var mergeOutput string

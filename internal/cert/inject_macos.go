@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"os/exec"
 
-	"github.fkinternal.com/dibakshya-c/tokensense/internal/config"
+	"github.com/dibakshya/tokensense/internal/config"
 )
 
 // InjectCA adds the Tokensense CA cert to the macOS system keychain.

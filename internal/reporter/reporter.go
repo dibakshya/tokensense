@@ -6,8 +6,8 @@ import (
 	"sort"
 	"time"
 
-	"github.fkinternal.com/dibakshya-c/tokensense/internal/classifier"
-	"github.fkinternal.com/dibakshya-c/tokensense/internal/storage"
+	"github.com/dibakshya/tokensense/internal/classifier"
+	"github.com/dibakshya/tokensense/internal/storage"
 )
 
 

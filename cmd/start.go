@@ -9,12 +9,12 @@ import (
 	"syscall"
 
 	"github.com/spf13/cobra"
-	"github.fkinternal.com/dibakshya-c/tokensense/internal/cert"
-	"github.fkinternal.com/dibakshya-c/tokensense/internal/classifier"
-	"github.fkinternal.com/dibakshya-c/tokensense/internal/config"
-	"github.fkinternal.com/dibakshya-c/tokensense/internal/proxy"
-	"github.fkinternal.com/dibakshya-c/tokensense/internal/storage"
-	"github.fkinternal.com/dibakshya-c/tokensense/internal/updater"
+	"github.com/dibakshya/tokensense/internal/cert"
+	"github.com/dibakshya/tokensense/internal/classifier"
+	"github.com/dibakshya/tokensense/internal/config"
+	"github.com/dibakshya/tokensense/internal/proxy"
+	"github.com/dibakshya/tokensense/internal/storage"
+	"github.com/dibakshya/tokensense/internal/updater"
 )
 
 // BundledMatrix is the embedded model matrix YAML, set from main.go.

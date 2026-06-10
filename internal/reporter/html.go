@@ -7,7 +7,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.fkinternal.com/dibakshya-c/tokensense/internal/config"
+	"github.com/dibakshya/tokensense/internal/config"
 )
 
 //go:embed templates/report.html.tmpl

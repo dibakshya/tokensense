@@ -26,7 +26,7 @@ brews:
   - repository:
       owner: tokensense
       name: homebrew-tap
-    homepage: https://github.fkinternal.com/dibakshya-c/tokensense
+    homepage: https://github.com/dibakshya/tokensense
     description: "AI token usage optimizer — local proxy for model cost analysis"
     license: MIT
     install: |

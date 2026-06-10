@@ -838,7 +838,7 @@ Or just use **Tokensense** — it does this automatically for all AI tools.
 
 ---
 
-*This guide is bundled with [Tokensense](https://github.fkinternal.com/dibakshya-c/tokensense) — the open-source AI token usage optimizer.*  
+*This guide is bundled with [Tokensense](https://github.com/dibakshya/tokensense) — the open-source AI token usage optimizer.*  
 *Run `tokensense ask "..."` to get model recommendations for any task.*  
 *Run `tokensense report` to see your daily cost breakdown.*
 
@@ -846,4 +846,4 @@ Or just use **Tokensense** — it does this automatically for all AI tools.
 
 **Created by Dibakshya Chakraborty — Product Builder**
 
-**License:** MIT | **Issues:** github.fkinternal.com/dibakshya-c/tokensense/issues | **Contributing:** See CONTRIBUTING.md
+**License:** MIT | **Issues:** github.com/dibakshya/tokensense/issues | **Contributing:** See CONTRIBUTING.md

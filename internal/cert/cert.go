@@ -13,7 +13,7 @@ import (
 	"os"
 	"time"
 
-	"github.fkinternal.com/dibakshya-c/tokensense/internal/config"
+	"github.com/dibakshya/tokensense/internal/config"
 )
 
 // GenerateCA creates a new CA key pair and writes them to disk.

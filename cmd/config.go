@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/spf13/cobra"
-	"github.fkinternal.com/dibakshya-c/tokensense/internal/config"
+	"github.com/dibakshya/tokensense/internal/config"
 )
 
 func init() {

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.fkinternal.com/dibakshya-c/tokensense/internal/classifier"
+	"github.com/dibakshya/tokensense/internal/classifier"
 )
 
 // Result holds the full advisor output.

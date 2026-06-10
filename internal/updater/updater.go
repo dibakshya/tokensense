@@ -8,12 +8,12 @@ import (
 	"os"
 	"time"
 
-	"github.fkinternal.com/dibakshya-c/tokensense/internal/classifier"
-	"github.fkinternal.com/dibakshya-c/tokensense/internal/config"
+	"github.com/dibakshya/tokensense/internal/classifier"
+	"github.com/dibakshya/tokensense/internal/config"
 )
 
 const (
-	matrixURL       = "https://github.fkinternal.com/dibakshya-c/tokensense/raw/main/data/model-matrix.yaml"
+	matrixURL       = "https://raw.githubusercontent.com/dibakshya/tokensense/main/data/model-matrix.yaml"
 	stalenessWarnDays = 7
 	stalenessMaxDays  = 60
 )

@@ -7,8 +7,8 @@ import (
 	"time"
 
 	"github.com/spf13/cobra"
-	"github.fkinternal.com/dibakshya-c/tokensense/internal/config"
-	"github.fkinternal.com/dibakshya-c/tokensense/internal/storage"
+	"github.com/dibakshya/tokensense/internal/config"
+	"github.com/dibakshya/tokensense/internal/storage"
 )
 
 var exportOutput string

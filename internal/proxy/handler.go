@@ -12,8 +12,8 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.fkinternal.com/dibakshya-c/tokensense/internal/classifier"
-	"github.fkinternal.com/dibakshya-c/tokensense/internal/storage"
+	"github.com/dibakshya/tokensense/internal/classifier"
+	"github.com/dibakshya/tokensense/internal/storage"
 )
 
 // proxyHandler handles CONNECT and direct HTTP requests.

@@ -5,10 +5,10 @@ import (
 	"time"
 
 	"github.com/spf13/cobra"
-	"github.fkinternal.com/dibakshya-c/tokensense/internal/config"
-	"github.fkinternal.com/dibakshya-c/tokensense/internal/daemon"
-	"github.fkinternal.com/dibakshya-c/tokensense/internal/storage"
-	"github.fkinternal.com/dibakshya-c/tokensense/internal/updater"
+	"github.com/dibakshya/tokensense/internal/config"
+	"github.com/dibakshya/tokensense/internal/daemon"
+	"github.com/dibakshya/tokensense/internal/storage"
+	"github.com/dibakshya/tokensense/internal/updater"
 )
 
 var statusVerbose bool

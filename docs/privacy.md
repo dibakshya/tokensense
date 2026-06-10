@@ -49,7 +49,7 @@ Tokensense makes exactly **two** types of outbound requests:
 2. **Model matrix update** (daily, optional) — fetches updated model pricing from GitHub
 
    ```
-   GET https://github.fkinternal.com/dibakshya-c/tokensense/raw/main/data/model-matrix.yaml
+   GET https://raw.githubusercontent.com/dibakshya/tokensense/main/data/model-matrix.yaml
    User-Agent: tokensense/{VERSION} (install_id/{ANONYMOUS_UUID})
    ```
 

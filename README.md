@@ -1,7 +1,7 @@
 # Tokensense
 
-[![CI](https://github.fkinternal.com/dibakshya-c/tokensense/actions/workflows/ci.yml/badge.svg)](https://github.fkinternal.com/dibakshya-c/tokensense/actions/workflows/ci.yml)
-[![Go Report Card](https://goreportcard.com/badge/github.fkinternal.com/dibakshya-c/tokensense)](https://goreportcard.com/report/github.fkinternal.com/dibakshya-c/tokensense)
+[![CI](https://github.com/dibakshya/tokensense/actions/workflows/ci.yml/badge.svg)](https://github.com/dibakshya/tokensense/actions/workflows/ci.yml)
+[![Go Report Card](https://goreportcard.com/badge/github.com/dibakshya/tokensense)](https://goreportcard.com/report/github.com/dibakshya/tokensense)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 **Open-source AI token usage optimizer.** A local CLI tool that intercepts AI API calls, classifies each request by task type, and shows you where cheaper models could have been used — saving you money without losing quality.
@@ -21,16 +21,16 @@
 
 ```bash
 # macOS / Linux
-curl -fsSL https://github.fkinternal.com/dibakshya-c/tokensense/raw/main/scripts/install.sh | sh
+curl -fsSL https://raw.githubusercontent.com/dibakshya/tokensense/main/scripts/install.sh | sh
 
 # Homebrew
 brew install tokensense/tap/tokensense
 
 # Windows (PowerShell)
-irm https://github.fkinternal.com/dibakshya-c/tokensense/raw/main/scripts/install.ps1 | iex
+irm https://raw.githubusercontent.com/dibakshya/tokensense/main/scripts/install.ps1 | iex
 
 # From source
-go install github.fkinternal.com/dibakshya-c/tokensense@latest
+go install github.com/dibakshya/tokensense@latest
 ```
 
 ### Setup

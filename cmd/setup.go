@@ -10,11 +10,11 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/spf13/cobra"
-	"github.fkinternal.com/dibakshya-c/tokensense/internal/cert"
-	"github.fkinternal.com/dibakshya-c/tokensense/internal/config"
-	"github.fkinternal.com/dibakshya-c/tokensense/internal/daemon"
-	"github.fkinternal.com/dibakshya-c/tokensense/internal/detector"
-	"github.fkinternal.com/dibakshya-c/tokensense/internal/wizard"
+	"github.com/dibakshya/tokensense/internal/cert"
+	"github.com/dibakshya/tokensense/internal/config"
+	"github.com/dibakshya/tokensense/internal/daemon"
+	"github.com/dibakshya/tokensense/internal/detector"
+	"github.com/dibakshya/tokensense/internal/wizard"
 )
 
 const guideFilename = "token-optimization-guide.md"

@@ -5,7 +5,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.fkinternal.com/dibakshya-c/tokensense/internal/classifier"
+	"github.com/dibakshya/tokensense/internal/classifier"
 )
 
 func TestAdviseMinWordCount(t *testing.T) {

@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "Landing Page",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["serve", "docs", "-l", "7891", "--no-clipboard"],
+      "port": 7891
+    }
+  ]
+}

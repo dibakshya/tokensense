@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
-	"github.fkinternal.com/dibakshya-c/tokensense/internal/daemon"
+	"github.com/dibakshya/tokensense/internal/daemon"
 )
 
 func init() {

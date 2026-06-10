@@ -5,10 +5,10 @@ import (
 	"strings"
 
 	"github.com/spf13/cobra"
-	"github.fkinternal.com/dibakshya-c/tokensense/internal/advisor"
-	"github.fkinternal.com/dibakshya-c/tokensense/internal/classifier"
-	"github.fkinternal.com/dibakshya-c/tokensense/internal/config"
-	"github.fkinternal.com/dibakshya-c/tokensense/internal/updater"
+	"github.com/dibakshya/tokensense/internal/advisor"
+	"github.com/dibakshya/tokensense/internal/classifier"
+	"github.com/dibakshya/tokensense/internal/config"
+	"github.com/dibakshya/tokensense/internal/updater"
 )
 
 var (

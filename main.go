@@ -4,7 +4,7 @@ import (
 	_ "embed"
 	"os"
 
-	"github.fkinternal.com/dibakshya-c/tokensense/cmd"
+	"github.com/dibakshya/tokensense/cmd"
 )
 
 // Build-time variables set by goreleaser ldflags

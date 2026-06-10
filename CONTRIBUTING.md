@@ -5,7 +5,7 @@ Thanks for your interest in contributing!
 ## Development Setup
 
 ```bash
-git clone https://github.fkinternal.com/dibakshya-c/tokensense
+git clone https://github.com/dibakshya/tokensense
 cd tokensense
 go mod download
 go build -o tokensense .

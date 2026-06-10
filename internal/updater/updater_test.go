@@ -5,7 +5,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.fkinternal.com/dibakshya-c/tokensense/internal/classifier"
+	"github.com/dibakshya/tokensense/internal/classifier"
 )
 
 // QA-TC-019: LoadCachedMatrix falls back to bundled when no cache exists

@@ -1,11 +1,10 @@
 $ErrorActionPreference = "Stop"
-$repo = "dibakshya-c/tokensense"
-$ghHost = "github.fkinternal.com"
+$repo = "dibakshya/tokensense"
 
-$release = Invoke-RestMethod -Uri "https://$ghHost/api/v3/repos/$repo/releases/latest"
+$release = Invoke-RestMethod -Uri "https://api.github.com/repos/$repo/releases/latest"
 $version = $release.tag_name -replace '^v', ''
 $arch = if ([System.Environment]::Is64BitOperatingSystem) { "amd64" } else { "amd64" }
-$url = "https://$ghHost/$repo/releases/download/v$version/tokensense_${version}_windows_${arch}.zip"
+$url = "https://github.com/$repo/releases/download/v$version/tokensense_${version}_windows_${arch}.zip"
 
 Write-Host "Downloading Tokensense $version for Windows/$arch..."
 $tmpDir = Join-Path $env:TEMP "tokensense-install"

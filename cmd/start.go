@@ -75,6 +75,14 @@ var startCmd = &cobra.Command{
 		addr := fmt.Sprintf("%s:%d", host, port)
 		contentMode := config.GetString("privacy_mode") == "content"
 
+		// Enable the OS-level system proxy when starting manually.
+		// (--foreground is the daemon path; setup already configured it there.)
+		if !foreground {
+			if err := EnableSystemProxy(); err != nil {
+				fmt.Printf("  %s\n", yellow("⚠️  Could not set system proxy: "+err.Error()))
+			}
+		}
+
 		// ── Check port availability before printing anything ──────────────────
 		// This prevents the "proxy is running" banner appearing right before
 		// an "address already in use" crash.

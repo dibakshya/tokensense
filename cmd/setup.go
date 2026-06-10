@@ -107,6 +107,14 @@ var setupCmd = &cobra.Command{
 		}
 		proxyStarted := svc.Start() == nil
 
+		// Set the OS-level system proxy so GUI apps (Cursor, Claude Desktop,
+		// VS Code, etc.) route through Tokensense without needing a terminal restart.
+		if err := EnableSystemProxy(); err != nil {
+			fmt.Printf("  %s\n", yellow("⚠️  Could not set system proxy automatically: "+err.Error()))
+			fmt.Println("  Set it manually: System Settings → Network → (your connection) → Proxies")
+			fmt.Println("  Enable 'Web Proxy' and 'Secure Web Proxy', set server 127.0.0.1 port 7890")
+		}
+
 		// Save the token optimization guide to the desktop on first run
 		if len(BundledGuide) > 0 {
 			saveGuideToDesktop()

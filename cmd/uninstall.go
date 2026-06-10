@@ -37,11 +37,16 @@ var uninstallCmd = &cobra.Command{
 			return nil
 		}
 
-		// Stop and remove service
+		// Stop service and clear system proxy
 		fmt.Print("Stopping service... ")
 		svc := daemon.New()
 		svc.Stop()
 		svc.Uninstall()
+		fmt.Println("done")
+
+		fmt.Print("Clearing system proxy... ")
+		config.LoadConfig() //nolint:errcheck
+		DisableSystemProxy()
 		fmt.Println("done")
 
 		// Remove CA from trust store

@@ -102,12 +102,17 @@ func (h *proxyHandler) interceptConnect(w http.ResponseWriter, r *http.Request, 
 
 	startTime := time.Now()
 
-	// Forward to upstream
-	upstreamTLS, err := tls.Dial("tcp", hostname+":443", &tls.Config{
-		ServerName: hostname,
-	})
+	// Forward to upstream — prefer IPv4 to avoid "bad file descriptor" on
+	// environments where IPv6 is unavailable (e.g. split-tunnel VPNs).
+	rawConn, err := dialUpstream(hostname, "443")
 	if err != nil {
 		h.server.logger.Printf("Cannot connect to upstream %s: %v", hostname, err)
+		return
+	}
+	upstreamTLS := tls.Client(rawConn, &tls.Config{ServerName: hostname})
+	if err := upstreamTLS.Handshake(); err != nil {
+		rawConn.Close()
+		h.server.logger.Printf("TLS handshake with upstream %s failed: %v", hostname, err)
 		return
 	}
 	defer upstreamTLS.Close()
@@ -144,8 +149,13 @@ func (h *proxyHandler) tunnelConnect(w http.ResponseWriter, r *http.Request, hos
 		host += ":443"
 	}
 
-	// Connect to upstream
-	upstream, err := net.DialTimeout("tcp", host, 10*time.Second)
+	// Connect to upstream — prefer IPv4 (same reason as interceptConnect).
+	hostname2 := strings.Split(host, ":")[0]
+	port2 := "443"
+	if idx := strings.LastIndex(host, ":"); idx >= 0 {
+		port2 = host[idx+1:]
+	}
+	upstream, err := dialUpstream(hostname2, port2)
 	if err != nil {
 		http.Error(w, "Cannot connect to upstream", http.StatusBadGateway)
 		return
@@ -255,6 +265,20 @@ func (h *proxyHandler) classifyAndStore(requestData, responseData []byte, hostna
 
 func (h *proxyHandler) signForHost(hostname string) (*x509.Certificate, *ecdsa.PrivateKey, error) {
 	return signForHostWithCA(hostname, h.server.caCert, h.server.caKey)
+}
+
+// dialUpstream connects to host:port, trying IPv4 first then IPv6.
+// Go's default resolver picks whichever address comes first in DNS, which is
+// often IPv6. On environments with a split-tunnel VPN or broken IPv6 (common
+// on corporate networks), IPv6 dials fail with "bad file descriptor".
+// Trying tcp4 first, then falling back to tcp, ensures we always get a working
+// connection when IPv4 is available.
+func dialUpstream(hostname, port string) (net.Conn, error) {
+	addr := net.JoinHostPort(hostname, port)
+	if conn, err := net.DialTimeout("tcp4", addr, 10*time.Second); err == nil {
+		return conn, nil
+	}
+	return net.DialTimeout("tcp", addr, 10*time.Second)
 }
 
 func extractModel(data []byte) string {

@@ -85,7 +85,7 @@ func GenerateReport(db *storage.DB, matrix *classifier.ModelMatrix, date string)
 			taskType = *req.TaskType
 		}
 		if _, ok := taskMap[taskType]; !ok {
-			taskMap[taskType] = &taskAgg{}
+			taskMap[taskType] = &taskAgg{complexity: map[string]int{}}
 		}
 		ta := taskMap[taskType]
 		ta.count++
@@ -98,6 +98,9 @@ func GenerateReport(db *storage.DB, matrix *classifier.ModelMatrix, date string)
 		}
 		if req.TokensOut != nil {
 			ta.tokensOut += *req.TokensOut
+		}
+		if req.Complexity != nil {
+			ta.complexity[*req.Complexity]++
 		}
 
 		// Tool aggregation
@@ -129,7 +132,7 @@ func GenerateReport(db *storage.DB, matrix *classifier.ModelMatrix, date string)
 
 		// Find cheapest recommended model for this task
 		if matrix != nil && taskType != "unknown" {
-			complexity := "medium" // Default assumption
+			complexity := dominantComplexity(agg.complexity)
 			recs := matrix.RankModels(taskType, complexity)
 			if len(recs) > 0 {
 				cheapest := recs[0]
@@ -221,16 +224,31 @@ func GenerateReport(db *storage.DB, matrix *classifier.ModelMatrix, date string)
 }
 
 type taskAgg struct {
-	count    int
-	costUSD  float64
-	models   []string
-	tokensIn int
-	tokensOut int
+	count      int
+	costUSD    float64
+	models     []string
+	tokensIn   int
+	tokensOut  int
+	complexity map[string]int // tallies per complexity bucket
 }
 
 type toolAgg struct {
 	count   int
 	costUSD float64
+}
+
+// dominantComplexity returns the most common complexity bucket, defaulting to "medium".
+func dominantComplexity(counts map[string]int) string {
+	if len(counts) == 0 {
+		return "medium"
+	}
+	best, bestN := "medium", 0
+	for k, n := range counts {
+		if n > bestN {
+			best, bestN = k, n
+		}
+	}
+	return best
 }
 
 func topModel(models []string) string {

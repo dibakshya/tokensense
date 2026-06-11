@@ -32,9 +32,20 @@ func Open(dbPath string) (*DB, error) {
 		conn.Close()
 		return nil, fmt.Errorf("cannot enable WAL mode: %w", err)
 	}
+	// NORMAL synchronous is recommended for WAL mode: safe after OS crash, fast.
+	if _, err := conn.Exec("PRAGMA synchronous=NORMAL"); err != nil {
+		conn.Close()
+		return nil, fmt.Errorf("cannot set synchronous mode: %w", err)
+	}
 	if _, err := conn.Exec("PRAGMA busy_timeout=5000"); err != nil {
 		conn.Close()
 		return nil, fmt.Errorf("cannot set busy timeout: %w", err)
+	}
+	// Checkpoint after every 100 WAL pages (default 1000) so data survives
+	// an unexpected proxy kill with minimal loss.
+	if _, err := conn.Exec("PRAGMA wal_autocheckpoint=100"); err != nil {
+		conn.Close()
+		return nil, fmt.Errorf("cannot set wal_autocheckpoint: %w", err)
 	}
 
 	if err := migrate(conn); err != nil {
@@ -53,8 +64,17 @@ func migrate(conn *sql.DB) error {
 	return nil
 }
 
+// Checkpoint flushes the WAL to the main database file so data survives a
+// process restart. Call this before closing the DB in long-running processes.
+func (db *DB) Checkpoint() {
+	db.mu.Lock()
+	defer db.mu.Unlock()
+	db.conn.Exec("PRAGMA wal_checkpoint(TRUNCATE)") //nolint:errcheck
+}
+
 // Close closes the database connection.
 func (db *DB) Close() error {
+	db.Checkpoint()
 	return db.conn.Close()
 }
 
